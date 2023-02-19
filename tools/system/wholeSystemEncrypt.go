@@ -97,10 +97,6 @@ func generateListOfDirsToScan(dirsToScan []string, dirsToRemove []string) []stri
 	return dirsToScan
 }
 
-func scanDirGoRoutine(dir string, wg *sync.WaitGroup, chanFile chan []string, chanSize chan int64) {
-
-}
-
 func removeDirsFromList(dirsToRemove []string, dirsToScan []string) []string {
 	//* Remove dirs that would break the system
 
