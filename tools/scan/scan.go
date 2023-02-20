@@ -36,8 +36,10 @@ func ScanFilesInDirWithLockAdd(startDirPath string, skipHiddenDirs bool, encrypt
 			}
 		}
 		//check if file is already encrypted
-		alreadyEncrypted := strings.HasSuffix(path, ".enc")
-		if !info.IsDir() && !alreadyEncrypted {
+		var isOverMBLimit bool = info.Size() > 1000000*1000
+		//check if file ends with ".enc" and if it is a directory
+		var shouldWeScanFile bool = !strings.HasSuffix(path, ".enc") && !strings.HasSuffix(path, ".key") && !info.IsDir() && !isOverMBLimit
+		if shouldWeScanFile {
 			files = append(files, path)
 		}
 
@@ -57,7 +59,6 @@ func ScanForEncFilesInDir(startDirPath string, skipHiddenDirs bool) []string {
 	err := filepath.Walk(startDirPath, func(path string, info os.FileInfo, err error) error {
 		//*check if filepath contains hidden directory
 
-		pl(path)
 		if skipHiddenDirs {
 			containsHiddenPath := checkIfContainsHiddenDir(path)
 			if containsHiddenPath {

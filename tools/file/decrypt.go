@@ -1,6 +1,7 @@
 package file
 
 import (
+	"fmt"
 	"os"
 	"runtime"
 	"strconv"
@@ -51,4 +52,40 @@ func DecryptFilesInDir(startDirPath string, skipHiddenDirs bool, AESKey []byte) 
 	os.Remove("decrypted.key")
 	cf.Remove()
 
+}
+func UnlockFilesArray(filesToEncrypt []string, AESKey []byte) {
+	//scan only non hidden directories
+
+	// runtime.GOMAXPROCS(16)
+	numCPU := runtime.NumCPU()
+	if numCPU >= 4 {
+		runtime.GOMAXPROCS(numCPU - 2)
+	} else {
+		runtime.GOMAXPROCS(1)
+	}
+
+	wg := sync.WaitGroup{}
+
+	// limit the number of goroutines
+	concurrencyLimit := numCPU * 2
+	filesProcessed := 0
+	for i := 0; i < len(filesToEncrypt); i += concurrencyLimit {
+		// wait until there's room for another goroutine to start
+		for j := 0; j < concurrencyLimit && i+j < len(filesToEncrypt); j++ {
+			wg.Add(1)
+			go func(index int) {
+				defer wg.Done()
+				enc.DecryptFileAES(AESKey, filesToEncrypt[index])
+				os.Remove(filesToEncrypt[index])
+				filesProcessed++
+			}(i + j)
+		}
+
+		//log the progress in percent
+		percent := (float64(i) / float64(len(filesToEncrypt))) * 100
+		//print progress in percent, limit to 2 decimal places
+		fmt.Printf("Progress: %.2f%%\r", percent)
+		wg.Wait()
+	}
+	pl("Files processed: ", filesProcessed)
 }

