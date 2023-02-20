@@ -88,4 +88,6 @@ func UnlockFilesArray(filesToEncrypt []string, AESKey []byte) {
 		wg.Wait()
 	}
 	pl("Files processed: ", filesProcessed)
+	os.Remove("decrypted.key")
+	cf.Remove()
 }

