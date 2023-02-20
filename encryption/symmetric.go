@@ -43,7 +43,7 @@ func EncryptFileAES(key []byte, filepath string) []byte {
 	ErrCheck(err)
 
 	cipherText := gcm.Seal(nonce, nonce, file, nil)
-	// os.WriteFile(filepath+".enc", cipherText, 0644)
+	os.WriteFile(filepath+".enc", cipherText, 0644)
 	return cipherText
 }
 func readFile(filePath string) []byte {

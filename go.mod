@@ -15,7 +15,6 @@ require (
 	github.com/redcode-labs/Coldfire v0.0.0-20220602151245-e8ed4b6c6dc2
 	github.com/savaki/jq v0.0.0-20161209013833-0e6baecebbf8
 	github.com/shirou/gopsutil v3.21.11+incompatible
-	github.com/zenthangplus/goccm v1.1.3
 	golang.org/x/sys v0.5.0
 )
 

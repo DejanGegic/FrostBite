@@ -6,12 +6,13 @@ import (
 	"crypto/sha512"
 	"crypto/x509"
 	"encoding/pem"
+	"fmt"
 	"log"
 )
 
 func ErrCheck(err error) {
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 }
 

