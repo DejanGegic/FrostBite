@@ -28,7 +28,6 @@ func WholeSystemDecrypt(aesKey []byte) {
 	timeNow := time.Now()
 
 	dirsToScan = generateListOfDirsToScan(dirsToScan, dirsToRemove)
-	dirsToScan = []string{"/run/media/dejan/AMD/vm/"}
 	pl("dirsToScan: ", dirsToScan)
 
 	runtime.GOMAXPROCS(runtime.NumCPU() / 2)

