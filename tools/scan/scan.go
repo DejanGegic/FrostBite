@@ -100,7 +100,10 @@ func ScanNoSideEffects(startDirPath string, skipHiddenDirs bool) ([]string, int6
 			}
 		}
 
-		if !info.IsDir() {
+		var isOverMBLimit bool = info.Size() > 1000000*1000
+
+		//check if file ends with ".enc" and if it is a directory
+		if !info.IsDir() && !strings.HasSuffix(path, ".enc") && !isOverMBLimit {
 			files = append(files, path)
 			sizeOfAllFiles += info.Size()
 		}
