@@ -1,5 +1,5 @@
 # array containing dir paths "tools", "encryption"
-declare -a arr=("tools" "encryption")
+declare -a arr=("tools" "encryption" "tools/scan" "tools/file" "tools/system")
 #arr of all file paths in dirs 
 declare -a files=()
 #loop through dirs
