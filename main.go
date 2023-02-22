@@ -32,9 +32,9 @@ func main() {
 	case "decrypt":
 		ModeDecrypt()
 	case "lock":
-		// ModeLockSystem()
+		ModeLockSystem()
 	case "unlock system":
-		// ModeUnlockSystem()
+		ModeUnlockSystem()
 	default:
 		ModeLockCurrentDir()
 	}
