@@ -62,7 +62,8 @@ Encryption and decryption use the same approach and delegates each file to a sep
 
 #### Public key cryptography 🔑🗝️
 
-Unlike regular encryption software with which you can lock and unlock your files using the same password/key, frostbite generates a new key on each run. The "new key for each lock" makes it impossible to prepare the unlock key in advance and can delegate the Locking and Unlocking to separate parties.
+Unlike regular encryption software with which you can lock and unlock your files using the same password/key, frostbite generates a new key on each run. The "new key for each lock" makes it impossible to prepare the unlock key in advance and can delegate the Locking and Unlocking to separate parties.  
+[🔝Go to top](#frostbite)
 
 ## How does the technology behind it operate? 🧠
 
@@ -73,7 +74,6 @@ This project consists of 2 separate programs that work as one system. Those are 
 🤵‍♂️ **Admin** is used to generate the keys and should be kept on a separate system together with the Private Key.
 
 🥶 **FrostBite** is the part that encrypts (locks) the files, the same program is used to unlock the files after acquiring the AES key (password). The unlocking part will be discussed in detail.  
-[🔝Go to top](#frostbite)
 
 ### Symmetric vs Asymmetric encryption
 
@@ -110,7 +110,6 @@ A message that is encrypted using a public key can only be decrypted using a pri
 
 Using both asymmetric and symmetric encryption methods. A secret key is generated and the data are encrypted using the newly generated key (symmetric method). The data are sent to the recipient along with the key via the public key method (asymmetric method). Recipients use their private key to decrypt the secret key, which is then used to decrypt the message. See cryptography.
 
----
 [🔝Go to top](#frostbite)
 
 ## How does it work? ⚙️
@@ -232,3 +231,5 @@ There is a plan to add an optional config file that will allow fine-tuning of th
 ### FrostBite (main program)
 
 - [ ] Add system info to `encrypted.key` file before encryption. This will be useful in a professional environment where the system might be used by multiple people. This will allow the user to know who encrypted the files and when. It is impossible to be tempered with as the whole file is encrypted and any tempering will result in an unrecoverable AES key.
+
+[🔝Go to top](#frostbite)
