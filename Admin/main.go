@@ -38,30 +38,38 @@ func main() {
 	switch mode {
 	case "generate":
 		//confirm if user wants to generate new keys, if yes, then generate
-		generate := ""
-		fmt.Print("Are you sure you want to generate new keys? (y/N)  ")
-		fmt.Scanln(&generate)
-		if generate == "y" {
-			enc.GenerateKeysAndWriteThemToFiles()
-		} else {
-			pl("Exiting...")
-			os.Exit(0)
-		}
+		generateKeys()
 	case "decrypt":
-		key, err = os.ReadFile("keys/encrypted.key")
-		if err != nil {
-			fmt.Println("Please put encrypted key in keys/encrypted.key. Exiting...")
-			break
-		}
-		decrypted := enc.DecryptUsingKeyFromFile()
-		os.WriteFile("keys/decrypted.key", []byte(decrypted), 0644)
-		readFromFileKey, _ := os.ReadFile("keys/decrypted.key")
-		pl("Decrypted key: ", string(readFromFileKey))
+		decryptKey(key, err)
 
 	default:
 		pl("Invalid flag")
 	}
 
+}
+
+func decryptKey(key []byte, err error) {
+	key, err = os.ReadFile("keys/encrypted.key")
+	if err != nil {
+		fmt.Println("Please put encrypted key in keys/encrypted.key. Exiting...")
+		return
+	}
+	decrypted := enc.DecryptUsingKeyFromFile()
+	os.WriteFile("keys/decrypted.key", []byte(decrypted), 0644)
+	readFromFileKey, _ := os.ReadFile("keys/decrypted.key")
+	pl("Decrypted key: ", string(readFromFileKey))
+}
+
+func generateKeys() {
+	generate := ""
+	fmt.Print("Are you sure you want to generate new keys? (y/N)  ")
+	fmt.Scanln(&generate)
+	if generate == "y" {
+		enc.GenerateKeysAndWriteThemToFiles()
+	} else {
+		pl("Exiting...")
+		os.Exit(0)
+	}
 }
 
 func ChoseMode() string {
