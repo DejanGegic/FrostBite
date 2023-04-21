@@ -178,7 +178,7 @@ This is the default mode. If you run the program (by double clicking or running 
 #### Locking the whole system 🌎
 
 **How to activate this mode:**
-To activate this mode, add a file named `THIS MIGHT DESTROY MY COMPUTER` to the directory where the FrostBite binary is located. This file can be empty, it just needs to exist. This is a temporary solution to prevent accidental activation of this mode. Suggestions for a better solution are welcome, and will be implemented.
+To activate this mode, add a file named `THIS MAY LOCK MY DATA PERMANENTLY` to the directory where the FrostBite binary is located. This file can be empty, it just needs to exist. This is a temporary solution to prevent accidental activation of this mode. Suggestions for a better solution are welcome, and will be implemented.
 
 This mode is similar to the previous one, with some extra steps. First, the scanner will attempt to find all the disks on the system. Then it will scan in parallel all the disks and all the directories on the disks.
 
@@ -194,7 +194,7 @@ After running FrostBite in the encryption mode, you should find a file named `en
 
 #### Using the `decrypt.key`
 
-This is probably the simplest part. Just put the `decrypted.key` file in the same directory as the FrostBite binary. FrostBite will automatically detect the file and engage the decrypt mode. If you wish to run decrypt on the whole system, keep the `THIS MIGHT DESTROY MY COMPUTER` file in the same directory as the FrostBite binary, as this tells it to scan the whole system. If you wish it to only scan the current directory, just add the `decrypted.key` file to the directory you wish to decrypt and run FrostBite.
+This is probably the simplest part. Just put the `decrypted.key` file in the same directory as the FrostBite binary. FrostBite will automatically detect the file and engage the decrypt mode. If you wish to run decrypt on the whole system, keep the `THIS MAY LOCK MY DATA PERMANENTLY` file in the same directory as the FrostBite binary, as this tells it to scan the whole system. If you wish it to only scan the current directory, just add the `decrypted.key` file to the directory you wish to decrypt and run FrostBite.
 
 [🔝Go to top](#frostbite)
 

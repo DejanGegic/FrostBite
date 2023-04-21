@@ -1,6 +1,6 @@
 # Simple Guide
 
-This document is intended as a quick guide on how to use FrostBite. It is not intended to be a complete guide on how FrostBite works. For a more detailed guide, please refer to the [extended documentation](extended.md).
+This document is intended as a quick guide on how to use FrostBite. For a more detailed guide, please refer to the [extended documentation](extended.md).
 
 ## Terminology 📖
 
@@ -44,9 +44,9 @@ FrostFire by default encrypts the folder it is located in and all of its subfold
 
 ### Encrypting the entire computer 🖥️
 
-We warmly advise you read the [extended documentation](extended.md) before you attempt to encrypt the entire computer to understand the limitations.
+I warmly advise you to read the [extended documentation](extended.md) before you attempt to encrypt the entire computer to understand all limitations.
 
-To encrypt the entire computer, you need create a file named `THIS MIGHT DESTROY MY COMPUTER` in the same folder as the **FrostBite** program. Don't worry, the program will not actually destroy your computer. It is just a precaution to prevent accidental encryption of the entire computer.
+To encrypt the entire computer, you need create a file named `THIS MAY LOCK MY DATA PERMANENTLY` in the same folder as the **FrostBite** program. Don't worry, the program will not actually destroy your computer. It is just a precaution to prevent accidental encryption of the entire computer.
 
 Once you have created the file, you can run the **FrostBite** program and it will encrypt the entire computer. This process can take a while, depending on the size of your computer.
 
@@ -56,12 +56,12 @@ After running the **FrostBite** program, you will notice that the files have bee
 
 ### Getting the `decrypted.key` file 🗝️
 
-We will use the `encrypted.key` and `private.key` to generate `decrypted.key` which will be used to decrypt the files. This might sound complicated, but it is actually very simple, just follow the steps below.
+You will use the `encrypted.key` and `private.key` to generate `decrypted.key` which will be used to decrypt the files. This might sound complicated, but it is actually very simple, just follow the steps below.
 
-Remember the `keys` folder that we created earlier using the **Admin** program? Well, we are going to use it now. Move the `encrypted.key` and `private.key` (if it's not already there for some reason) files to the `keys` folder. Then, run the **Admin** program and it will generate the `decrypted.key` file in the `keys` folder. Well done, you have successfully generated the `decrypted.key` file.
+Remember the `keys` folder that you created earlier using the **Admin** program? You are going to use it now. Move the `encrypted.key` and `private.key` (if it's not already there for some reason) files to the `keys` folder. Then, run the **Admin** program and it will generate the `decrypted.key` file in the `keys` folder. Once done, you have successfully generated the `decrypted.key` file.
 
-### Decrypting the files 📂
+### Decrypting the files (Single folder and whole system) 📂
 
-To decrypt the files, you need to move the `decrypted.key` file to the folder you want to decrypt. Then, run the **FrostBite** program and it will decrypt the folder and all of its subfolders. 
+To decrypt the files, you need to move the `decrypted.key` file to the folder you want to decrypt. Then, run the **FrostBite** program and it will decrypt the folder and all of its subfolders.
 
-For decrypting the entire computer the process is pretty much the same.You still need to move the `decrypted.key` and **FrostBite** to the same folder (does not matter where on the system) but this time onclude the `THIS MIGHT DESTROY MY COMPUTER` file. Then run the **FrostBite** program and it will decrypt the entire computer.
+For decrypting the entire computer the process is pretty much the same. You still need to move the `decrypted.key` and **FrostBite** to the same folder (does not matter where on the system) but this time include the `THIS MAY LOCK MY DATA PERMANENTLY` file. Then run the **FrostBite** program and it will decrypt the entire computer.

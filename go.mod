@@ -15,12 +15,16 @@ require (
 	github.com/redcode-labs/Coldfire v0.0.0-20220602151245-e8ed4b6c6dc2
 	github.com/savaki/jq v0.0.0-20161209013833-0e6baecebbf8
 	github.com/shirou/gopsutil v3.21.11+incompatible
-	golang.org/x/sys v0.5.0
+	golang.org/x/sys v0.7.0
 )
 
 require (
+	github.com/3rf/codecoroner v0.0.0-20190711181142-77c68ba76a4c // indirect
+	github.com/fzipp/gocyclo v0.6.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
+	golang.org/x/mod v0.10.0 // indirect
+	golang.org/x/tools v0.8.0 // indirect
 )

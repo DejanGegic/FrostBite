@@ -6,7 +6,7 @@
 
 <!-- there are 2 separate guides. One is a quick start guide made for people who just want to use the software or standard users. the second one is more of a detailed technical documentation that explains why and how the software works, intended for technical, advanced and power users as well as engineers -->
 
-### Quick start guide
+### Quick start guide 🚀
 
 ➡️ [**CLICK HERE**](md/quick-start.md) to access the quick start guide.
 
@@ -18,7 +18,7 @@
 - Quick recap of how to use the software
 - Basic guide for new users
 
-### Extended documentation
+### Extended documentation 🌐📖
 
 ➡️ [**CLICK HERE**](md/extended.md) to access the extended documentation.
 
