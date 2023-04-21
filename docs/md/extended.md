@@ -1,4 +1,4 @@
-# FrostBite
+ # FrostBite
 
 If you want instructions on how to use the software, and aren't interested in how it works go straight to the [How to use it?](#how-to-use-it-) section.
 
