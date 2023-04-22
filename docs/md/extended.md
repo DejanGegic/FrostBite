@@ -4,10 +4,11 @@ If you want instructions on how to use the software, and aren't interested in ho
 
 - [FrostBite](#frostbite)
   - [What is FrostBite? 🥶](#what-is-frostbite-)
+    - [Who is it for? 👨‍🎓👨‍💻👩‍⚕️👩‍⚖️](#who-is-it-for-️️)
     - [So what is special with Frostbite? 💎](#so-what-is-special-with-frostbite-)
-      - [Cross-platform and cross-architecture support 🖥️](#cross-platform-and-cross-architecture-support-️)
       - [Performance 🚀](#performance-)
       - [Public key cryptography 🔑🗝️](#public-key-cryptography-️)
+      - [Cross-platform and cross-architecture support 🖥️](#cross-platform-and-cross-architecture-support-️)
   - [How does the technology behind it operate? 🧠](#how-does-the-technology-behind-it-operate-)
     - [Overview 📚](#overview-)
     - [Symmetric vs Asymmetric encryption](#symmetric-vs-asymmetric-encryption)
@@ -43,27 +44,42 @@ If you want instructions on how to use the software, and aren't interested in ho
 
 Frostbite is a file encryption software targeting activists, journalists, and anyone who needs their data protected in transit.
 
+### Who is it for? 👨‍🎓👨‍💻👩‍⚕️👩‍⚖️
+
+This encryption software is designed to provide a high level of security for users who need to protect their files and maintain confidentiality. It can be used by a variety of audiences, including:
+
+- 🗞️ Journalists and activists who work with sensitive information that could put themselves or others in danger if it falls into the wrong hands. This software can provide a secure and reliable way to protect their files and maintain the confidentiality of their sources.
+
+- 💼 Business professionals dealing with confidential information such as financial records, contracts, and trade secrets can benefit from using this software to encrypt their files and protect them from cyber-attacks.
+
+- 🏛️ Government agencies dealing with classified information require robust security measures to safeguard their data. This encryption software can be a suitable solution for them to secure their files and data.
+
+- 🧪 Researchers and academics may have sensitive information such as research data, grant proposals, and other intellectual property that they need to protect. This software can help to protect their data and maintain its confidentiality.
+
+- 👥 Anyone who values data security, including freelancers, consultants, and individuals who want to ensure the privacy of their personal files, can benefit from using this encryption software.
+
 ### So what is special with Frostbite? 💎
-
-#### Cross-platform and cross-architecture support 🖥️
-
-Being written in Go, FrostBite can easily be compiled and run on Linux as well as Windows systems. It supports x64 as well as x86 for older systems, on Linux it even supports ARM for both 64 and 32 bit systems.
-
-Besides the binary itself, it automatically detects if it's run on Linux or Windows and adjusts the directory scanning accordingly.
 
 #### Performance 🚀
 
 Besides Go being in the C neighborhood when it comes to performance, there a few more tricks that FrostBite uses to gain an edge.\
 While scanning the system, each disk is designated to a separate Go worker which for simplicity can be thought of as a separate CPU thread. That means that as long as your system has more CPU threads (Usually 2x more than CPU cores) than disks, scanning will take as much time as the slowest disk read time.
 
-Encryption and decryption use the same approach and delegates each file to a separate worker. Number of workers is limited to avoid freezing the system and hogging all the resources, but on HDD systems the bottleneck will probably be the disk anyways.
+Encryption and decryption use the same approach and delegates each file to a separate worker. Number of workers is limited to avoid freezing the system and hogging all the resources, but anyways on HDD systems the bottleneck will probably be the disk.
 
 #### Public key cryptography 🔑🗝️
 
 Unlike regular encryption software with which you can lock and unlock your files using the same password/key, frostbite generates a new key on each run. The "new key for each lock" makes it impossible to prepare the unlock key in advance and can delegate the Locking and Unlocking to separate parties.  
-[🔝Go to top](#frostbite)
+
+#### Cross-platform and cross-architecture support 🖥️
+
+Being written in Go, FrostBite can easily be compiled and run on Linux as well as Windows systems. It supports x64 as well as x86 for legacy systems, on Linux it even supports ARM architecture for both 64 and 32 bit systems.
+
+Besides the binary itself, it automatically detects if it's run on Linux or Windows and adjusts the directory scanning accordingly.
 
 ## How does the technology behind it operate? 🧠
+
+[🔝Go to top](#frostbite)
 
 ### Overview 📚
 
