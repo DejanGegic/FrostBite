@@ -18,8 +18,6 @@ If you want instructions on how to use the software, and aren't interested in ho
     - [IMPORTANT ⚠️](#important-️)
     - [Building from source vs using prebuilt binaries (Advanced users) 🧰](#building-from-source-vs-using-prebuilt-binaries-advanced-users-)
     - [Creating public and private keys 🔑](#creating-public-and-private-keys-)
-      - [Windows generating key pairs 🪟](#windows-generating-key-pairs-)
-      - [Linux generating key pairs 🐧](#linux-generating-key-pairs-)
     - [Locking files 🔒](#locking-files-)
       - [Prerequisites 📋](#prerequisites-)
       - [Locking one folder/directory 📁](#locking-one-folderdirectory-)
@@ -128,15 +126,9 @@ If one wishes to build from source, simply run `build.sh` to build for all syste
 
 ![admin](../png/graphs/admin.png)
 
-Creating key pairs is simple but requires the user to run instructions in the command line. New users might be intimidated but there is no need, as it is very simple. If sufficient demand is shown, I will create a GUI for this part.
+Creating key pairs used to require command line interaction but was recently simplified.
 
-#### Windows generating key pairs 🪟
-
-For Windows open powershell or cmd in the folder where Admin.exe is located. Run it with the flag --generate, example: `./Admin.exe --generate`. It will ask you if you are sure you want to generate the files as it will overwrite the old ones. `public.key` and `private.key` will be saved to keys folder.
-
-#### Linux generating key pairs 🐧
-
-To generate key pairs in linux navigate to where the Admin binary is located and run `Admin --generate`. It will ask you if you are sure you want to generate the files as it will overwrite the old ones. `public.key` and `private.key` will be saved to keys folder.
+Navigate to **admin** (**admin.exe** on windows) and just run it. Nothing will pop-up, but a `keys` folder will be generated and a key pair placed into it. If the `keys` folder already exists, this will not work, delete it before running admin if you want a fresh set of keys.
 
 ### Locking files 🔒
 
@@ -163,7 +155,13 @@ The on Windows, on the C: disk, it will only scan the `C:/Users` directory. Whil
 
 *For the graphic, refer to the image above.*
 
-After running FrostBite in the encryption mode, you should find a file named `encrypted.key` in each directory. This file contains the AES key that was used to encrypt the files in that directory. To get the AES key, you need to run the Admin program. The process is similar to the one used to generate the keys. First, put the `encrypted.key` in the folder keys together with the `private.key`. Then run the Admin program with the flag `--decrypt`. The command will look like this: `./Admin.exe --decrypt`. Make sure that the `encrypted.key` and `private.key` are in `keys` directory located in the same directory as the Admin binary. The `decrypted.key` file will be generated in the `keys` directory. This file contains the symmetric AES key that was used to decrypt the files.
+After running FrostBite in the encryption mode, you should find a file named `encrypted.key` in each directory. This file contains the AES key that was used to encrypt the files in that directory. To get the AES key, you need to run the Admin program. The process is similar to the one used to generate the keys. First, put the `encrypted.key` in the folder keys together with the `private.key`. Then run the Admin program. Make sure that the `encrypted.key` and `private.key` are in `keys` directory located in the same directory as the Admin binary. The `decrypted.key` file will be generated in the `keys` directory. This file contains the symmetric AES key that was used to decrypt the files.
+
+    📂
+    ├── admin.exe
+    ├── keys
+    │   ├── private.key
+    │   └── encrypted.key
 
 #### Using the `decrypt.key`
 
@@ -178,8 +176,8 @@ This is probably the simplest part. Just put the `decrypted.key` file in the sam
 | Limitation | Description | Reason |
 | ---------- | ---------- | ---------- |
 | File size | Limited file size to 1GB | I determined that most files larger than 1GB are usually .iso, VM, temp or similar useless files that take too much time to process. There is a plan to add an option which file size should be excluded before running the encryption as I do understand that some video files, archives and large documents will be excluded, but this might put unneeded strain on older systems. |
-| Whole system scan Windows 🪟 | Can only scan `C:/Users` on C: disk | Safety feature to avoid encrypting vital system files. Will be fixed in the future, but not bricking the system is a priority |
-| Whole system scan Linux 🐧 | Can only scan `/home` on main disk | Same as Windows, but will probably be mediated earlier |
+| Whole system scan Windows 🪟 | Can only scan `C:/Users` on C: disk | Safety feature to avoid encrypting vital system files. Will be fixed in the future, but not bricking the system is a priority. This is an update priority. |
+| Whole system scan Linux 🐧 | Can only scan `/home` on main disk | Same as for Windows, not encrypting system files. Will be addressed in future updates. |
 
 ## Use cases; Why have I made it? 🤔
 

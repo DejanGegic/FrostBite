@@ -1,4 +1,4 @@
-# Simple Guide
+# Quick-Start guide 🚀
 
 This document is intended as a quick guide on how to use FrostBite. For a more detailed guide, please refer to the [extended documentation](extended.md).
 
