@@ -46,18 +46,19 @@ func SetModeOfOperation() {
 	filesThatAlterMode["THIS MIGHT DESTROY MY COMPUTER"] = "lock"
 
 	for file, mode := range filesThatAlterMode {
-		//check if file exists
-		if _, err := os.Stat(file); err == nil {
+		if _, err := os.Stat(file); !os.IsNotExist(err) {
 			Mode = mode
+			break
 		}
 	}
+
 	if Mode == "lock" {
-		//check if "decrypted.key" exists
-		if _, err := os.Stat("decrypted.key"); err == nil {
+		if _, err := os.Stat("decrypted.key"); !os.IsNotExist(err) {
 			Mode = "unlock system"
 		}
 	}
-	pl("Mode of operation set to: ", Mode)
+
+	pl("Mode of operation set to:", Mode)
 }
 
 func ModeDecrypt() {
