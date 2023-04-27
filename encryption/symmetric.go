@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"io/ioutil"
 	"os"
 )
 
@@ -22,10 +23,7 @@ func DecryptFileAES(key []byte, filepath string) {
 
 	cipherText, err := os.ReadFile(filepath)
 	ErrCheck(err)
-	// //check if file ends in .enc
-	// if filepath[len(filepath)-4:] != ".enc" {
-	// 	return
-	// }
+
 	plainText, err := gcm.Open(nil, cipherText[:gcm.NonceSize()], cipherText[gcm.NonceSize():], nil)
 	ErrCheck(err)
 	originalFileName := filepath[:len(filepath)-4]
@@ -47,7 +45,8 @@ func EncryptFileAES(key []byte, filepath string) []byte {
 	return cipherText
 }
 func readFile(filePath string) []byte {
-	file, err := os.ReadFile(filePath)
+	file, err := ioutil.ReadFile(filePath)
 	ErrCheck(err)
+	//close file
 	return file
 }
