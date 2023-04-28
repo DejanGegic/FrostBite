@@ -2,6 +2,7 @@ package encryption
 
 import (
 	"crypto/rand"
+	"crypto/rsa"
 	"fmt"
 	"os"
 )
@@ -32,11 +33,18 @@ func GenerateKeysAndWriteThemToFiles() {
 	os.WriteFile("keys/private.key", PrivateKeyToBytes(privKey), 0644)
 	os.WriteFile("keys/public.key", PublicKeyToBytes(pubKey), 0644)
 
-	os.Mkdir("../keys", 0755)
-	// os.WriteFile("../keys/private.key", PrivateKeyToBytes(privKey), 0644)
-	os.WriteFile("../keys/public.key", PublicKeyToBytes(pubKey), 0644)
-
+	//if ../main.go exists, execute code
+	copyPublicKeyToParentDir(pubKey)
 	CheckIfFileKeysAreValid(key)
+}
+
+// used in testing when admin is located inside rest of frostfire repo
+func copyPublicKeyToParentDir(pubKey *rsa.PublicKey) {
+	if _, err := os.Stat("../keys"); os.IsNotExist(err) {
+		os.Mkdir("../keys", 0755)
+		os.WriteFile("../keys/public.key", PublicKeyToBytes(pubKey), 0644)
+
+	}
 }
 
 func CheckIfFileKeysAreValid(key []byte) {
