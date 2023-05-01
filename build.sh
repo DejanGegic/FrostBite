@@ -32,6 +32,9 @@ do
     GOARCH=${split[1]}
     output_name="Admin-$GOOS-$GOARCH"
     output_path=./dist/Admin/$output_name
+    if [ $GOOS = "windows" ]; then
+        output_path=$output_path.exe
+    fi
     env GOOS=$GOOS GOARCH=$GOARCH go build -o $output_path main.go
     echo "Built $output_name successfully!"
     if [ $? -ne 0 ]; then
