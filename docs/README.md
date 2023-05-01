@@ -22,12 +22,18 @@ This encryption software is designed to provide a high level of security for use
 
 ### So what is special with Frostbite? 💎
 
+#### Ease of use 🧠
+
+FrostBite is designed to be as easy to use as possible. It has no graphical user interface (GUI), or even a command line interface (CLI). You just run it and it does its job. It's that simple.
+
+#### Passwordless 🔏
+
+That's right, you don't need to remember any passwords or keys. One less thing to worry about.
+
 #### Performance 🚀
 
-Besides Go being in the C neighborhood when it comes to performance, there a few more tricks that FrostBite uses to gain an edge.🗡️ \
-While scanning the system, each disk is designated to a separate Go worker which for simplicity can be thought of as a separate CPU thread. That means that as long as your system has more CPU threads (Usually 2x more than CPU cores) than disks, scanning will take as much time as the slowest disk read time.
-
-Encryption and decryption use the same approach and delegates each file to a separate worker. Number of workers is limited to avoid freezing the system and hogging all the resources, but anyways on HDD systems the bottleneck will probably be the disk.
+Besides Go being in the C++ neighborhood when it comes to performance, there a few more tricks that FrostBite uses to gain an edge. This includes concurrent file processing, parallel scanning, and more.
+And it is still being improved, so expect even better performance in the future.
 
 #### Public key cryptography 🔑🗝️
 
