@@ -25,13 +25,15 @@ platformLength=${#platforms[@]}
 echo "Built $platformLength packages successfully!"
 
 ## do the same for ./Admin
+pushd ./Admin
 for platform in ${platforms[@]}
+
 do
     split=(${platform//\// })
     GOOS=${split[0]}
     GOARCH=${split[1]}
     output_name="Admin-$GOOS-$GOARCH"
-    output_path=./dist/Admin/$output_name
+    output_path=../dist/Admin/$output_name
     if [ $GOOS = "windows" ]; then
         output_path=$output_path.exe
     fi
@@ -42,6 +44,6 @@ do
         exit 1
     fi
 done
-
 #set all as executable
+popd
 chmod +x ./dist/*
