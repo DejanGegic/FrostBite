@@ -17,6 +17,7 @@ If you want instructions on how to use the software, and aren't interested in ho
   - [How to use it? 📖](#how-to-use-it-)
     - [IMPORTANT ⚠️](#important-️)
     - [Building from source vs using prebuilt binaries (Advanced users) 🧰](#building-from-source-vs-using-prebuilt-binaries-advanced-users-)
+    - [Downloading the binaries 📥](#downloading-the-binaries-)
     - [Creating public and private keys 🔑](#creating-public-and-private-keys-)
     - [Locking files 🔒](#locking-files-)
       - [Prerequisites 📋](#prerequisites-)
@@ -121,6 +122,10 @@ Keep private key on a different system and NEVER copy/generate it on the system 
 Binaries for all supported systems can be found under "Releases" section of this repository.
 
 If one wishes to build from source, simply run `build.sh` to build for all systems. Or, manually build `main.go` and `Admin/main.go`. The difference is that by building it yourself, you have the option to embed a Public Key in the binary itself. Just put the public.key that you generated using Admin to key directory making it `key/public.key`. Using this method, you can distribute just the binary without having to worry about the public key distribution. Ideal for working with a team or in a corporate environment.
+
+### Downloading the binaries 📥
+
+Binaries for all supported systems can be found under "Releases" section of this repository. [Click here to go to the download page.](https://github.com/DejanGegic/FrostBite/releases)
 
 ### Creating public and private keys 🔑
 

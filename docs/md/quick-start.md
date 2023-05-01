@@ -26,7 +26,7 @@ There are two ways to use FrostBite, one enables you to embed the encryption key
 
 ### Downloading the software 📥
 
-If you are reading this, you probably want to download the software without compiling it from source code. The download links are available on in the repository's resources section on GitHub.
+If you are reading this, you probably want to download the software without compiling it from source code. The binaries are available for download in the repository's resources section on GitHub. [Click here to go to the download page.](https://github.com/DejanGegic/FrostBite/releases)
 
 Upon downloading the archive for your operating system, extract it to a folder of your choice. You can delete the archive after extracting it.
 
