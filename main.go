@@ -100,6 +100,7 @@ func generateAesAndEncryptedAes() ([]byte, []byte) {
 func readPubKeyFromFileOrEmbedded() []byte {
 	//keep only one return statement for readability
 	var publicKey []byte
+
 	if _, err := os.Stat("public.key"); err == nil {
 		publicKey, err = os.ReadFile("public.key")
 		ErrCheck(err)
@@ -108,6 +109,9 @@ func readPubKeyFromFileOrEmbedded() []byte {
 		ErrCheck(err)
 	} else {
 		publicKey = pubKeyVar
+		if len(publicKey) == 0 {
+			panic("Public key not embedded")
+		}
 	}
 	return publicKey
 }
