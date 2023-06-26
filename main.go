@@ -110,10 +110,8 @@ func readPubKeyFromFileOrEmbedded() []byte {
 
 	if _, err := os.Stat("public.key"); err == nil {
 		publicKey, err = os.ReadFile("public.key")
-		panic(err)
 	} else if _, err := os.Stat("keys/public.key"); err == nil {
 		publicKey, err = os.ReadFile("keys/public.key")
-		panic(err)
 	} else {
 		publicKey = pubKeyVar
 		if len(publicKey) == 0 {
