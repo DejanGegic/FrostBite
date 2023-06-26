@@ -78,7 +78,11 @@ func goroutineScanDirDecrypt(dir string, wg *sync.WaitGroup, chanFilesScanned ch
 		}
 	} else {
 		pl("Scanning: ", dir)
-		files := scan.ScanForEncFilesInDir(dir, true)
+		files, err := scan.ScanForEncFilesInDir(dir, true)
+		if err != nil {
+			fmt.Println("Error: ", err)
+			wg.Done()
+		}
 		//send files to channel
 		chanFilesScanned <- files
 

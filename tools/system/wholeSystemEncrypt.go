@@ -78,7 +78,11 @@ func goroutineScanDir(dir string, wg *sync.WaitGroup, chanFilesScanned chan []st
 		}
 	} else {
 		pl("Scanning: ", dir)
-		files := scan.ScanFilesInDirWithLockAdd(dir, true, encryptedAesKey)
+		files, err := scan.ScanFilesInDirWithLockAdd(dir, true, encryptedAesKey)
+		if err != nil {
+			fmt.Println("Error scanning dir: ", err)
+			wg.Done()
+		}
 		//send files to channel
 		chanFilesScanned <- files
 

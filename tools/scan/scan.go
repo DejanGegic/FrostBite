@@ -1,21 +1,12 @@
 package scan
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-func ErrCheck(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
-var pl = fmt.Println
-
-func ScanFilesInDirWithLockAdd(startDirPath string, skipHiddenDirs bool, encryptedAESKey []byte) []string {
+func ScanFilesInDirWithLockAdd(startDirPath string, skipHiddenDirs bool, encryptedAESKey []byte) ([]string, error) {
 	//scan only non hidden directories
 	var files []string
 	err := filepath.Walk(startDirPath, func(path string, info os.FileInfo, err error) error {
@@ -31,7 +22,6 @@ func ScanFilesInDirWithLockAdd(startDirPath string, skipHiddenDirs bool, encrypt
 		_, err = os.Stat(path)
 		if err != nil {
 			if os.IsNotExist(err) {
-				// pl("Throws error: ", path)
 				return nil
 			}
 		}
@@ -50,10 +40,12 @@ func ScanFilesInDirWithLockAdd(startDirPath string, skipHiddenDirs bool, encrypt
 		return nil
 	})
 
-	ErrCheck(err)
-	return files
+	if err != nil {
+		return nil, err
+	}
+	return files, nil
 }
-func ScanForEncFilesInDir(startDirPath string, skipHiddenDirs bool) []string {
+func ScanForEncFilesInDir(startDirPath string, skipHiddenDirs bool) ([]string, error) {
 	//scan only non hidden directories
 	var files []string
 	err := filepath.Walk(startDirPath, func(path string, info os.FileInfo, err error) error {
@@ -80,19 +72,18 @@ func ScanForEncFilesInDir(startDirPath string, skipHiddenDirs bool) []string {
 
 		return nil
 	})
-
-	ErrCheck(err)
-	return files
+	if err != nil {
+		return nil, err
+	}
+	return files, nil
 }
 
-func ScanNoSideEffects(startDirPath string, skipHiddenDirs bool) ([]string, int64) {
+func ScanNoSideEffects(startDirPath string, skipHiddenDirs bool) ([]string, int64, error) {
 	//scan only non hidden directories
 	var sizeOfAllFiles int64
 	var files []string
 	err := filepath.Walk(startDirPath, func(path string, info os.FileInfo, err error) error {
 		//*check if filepath contains hidden directory
-		ErrCheck(err)
-
 		if skipHiddenDirs {
 			containsHiddenPath := checkIfContainsHiddenDir(path)
 			if containsHiddenPath || strings.HasPrefix(path, "node_modules") {
@@ -120,9 +111,11 @@ func ScanNoSideEffects(startDirPath string, skipHiddenDirs bool) ([]string, int6
 		return nil
 	})
 
-	ErrCheck(err)
+	if err != nil {
+		return nil, 0, err
+	}
 	// return files and size of all files
-	return files, sizeOfAllFiles
+	return files, sizeOfAllFiles, nil
 }
 
 func checkIfContainsHiddenDir(path string) bool {

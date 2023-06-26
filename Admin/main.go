@@ -8,12 +8,6 @@ import (
 	enc "admin/encryption"
 )
 
-func ErrCheck(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 var pl = fmt.Println
 
 func main() {
@@ -22,7 +16,10 @@ func main() {
 
 	key := make([]byte, 32)
 	_, err := rand.Read(key)
-	ErrCheck(err)
+	if err != nil {
+		pl("Random key generation failed. Panicking \n\n")
+		panic(err)
+	}
 
 	// encryptedData := enc.EncryptUsingKeyFromFile(key)
 	// os.WriteFile("keys/encrypted.key", encryptedData, 0644)
@@ -48,16 +45,20 @@ func main() {
 
 }
 
-func decryptKey(key []byte, err error) {
+func decryptKey(key []byte, err error) error {
 	key, err = os.ReadFile("keys/encrypted.key")
 	if err != nil {
-		fmt.Println("Please put encrypted key in keys/encrypted.key. Exiting...")
-		return
+		pl("Please put encrypted key in keys/encrypted.key. Exiting...")
+		return err
 	}
-	decrypted := enc.DecryptUsingKeyFromFile()
+	decrypted, err := enc.DecryptUsingKeyFromFile()
+	if err != nil {
+		return err
+	}
 	os.WriteFile("keys/decrypted.key", []byte(decrypted), 0644)
 	readFromFileKey, _ := os.ReadFile("keys/decrypted.key")
 	pl("Decrypted key: ", string(readFromFileKey))
+	return nil
 }
 
 func generateKeys() {
