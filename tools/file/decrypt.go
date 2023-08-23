@@ -13,20 +13,20 @@ import (
 	scan "frostbite.com/tools/scan"
 )
 
-func RunDencryptForCurrentDir(AESKey []byte) (fileList []string, err error) {
+func RunDencryptForCurrentDir(aesKey []byte) (fileList []string, err error) {
 	timeToScan := time.Now()
 	// get pwd
 	currentDir, err := os.Getwd()
 	if err != nil {
 		return nil, err
 	}
-	DecryptFilesInDir(currentDir, true, AESKey)
+	DecryptFilesInDir(currentDir, true, aesKey)
 	timeToScanEnd := time.Now()
 	cf.PrintGood("Files found: " + strconv.Itoa(len(fileList)))
 	cf.PrintInfo("Time to scan user files: " + timeToScanEnd.Sub(timeToScan).String())
 	return fileList, nil
 }
-func DecryptFilesInDir(startDirPath string, skipHiddenDirs bool, AESKey []byte) error {
+func DecryptFilesInDir(startDirPath string, skipHiddenDirs bool, aesKey []byte) error {
 	// scan only non hidden directories
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	filesToDecrypt, err := scan.ScanForEncFilesInDir(startDirPath, skipHiddenDirs)
@@ -40,7 +40,7 @@ func DecryptFilesInDir(startDirPath string, skipHiddenDirs bool, AESKey []byte) 
 	for _, filePath := range filesToDecrypt {
 		go func(filePath string) {
 			// decrypt file and remove .enc
-			enc.DecryptFileAES(AESKey, filePath)
+			enc.DecryptFileAES(aesKey, filePath)
 			os.Remove(filePath)
 			wg.Done()
 		}(filePath)
@@ -53,7 +53,7 @@ func DecryptFilesInDir(startDirPath string, skipHiddenDirs bool, AESKey []byte) 
 
 	return nil
 }
-func UnlockFilesArray(filesToEncrypt []string, AESKey []byte) {
+func UnlockFilesArray(filesToEncrypt []string, aesKey []byte) {
 	// scan only non hidden directories
 
 	// runtime.GOMAXPROCS(16)
@@ -75,7 +75,7 @@ func UnlockFilesArray(filesToEncrypt []string, AESKey []byte) {
 			wg.Add(1)
 			go func(index int) {
 				defer wg.Done()
-				enc.DecryptFileAES(AESKey, filesToEncrypt[index])
+				enc.DecryptFileAES(aesKey, filesToEncrypt[index])
 				os.Remove(filesToEncrypt[index])
 				filesProcessed++
 			}(i + j)
