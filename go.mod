@@ -19,12 +19,8 @@ require (
 )
 
 require (
-	github.com/3rf/codecoroner v0.0.0-20190711181142-77c68ba76a4c // indirect
-	github.com/droptheplot/abcgo v0.0.0-20200514050650-2d41882292f4 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
-	golang.org/x/mod v0.10.0 // indirect
-	golang.org/x/tools v0.9.1 // indirect
 )

@@ -48,8 +48,8 @@ func getAllEncFiles(dirsToScan []string) []string {
 	wg := sync.WaitGroup{}
 	wg.Add(len(dirsToScan))
 
-	var filesToEncrypt []string
-	var chanFilesScanned = make(chan []string)
+	filesToEncrypt := make([]string, 0)
+	chanFilesScanned := make(chan []string)
 
 	for _, dir := range dirsToScan {
 		go goroutineScanDirDecrypt(dir, &wg, chanFilesScanned)
@@ -60,7 +60,6 @@ func getAllEncFiles(dirsToScan []string) []string {
 			files := <-chanFilesScanned
 			filesToEncrypt = append(filesToEncrypt, files...)
 			wg.Done()
-
 		}
 	}()
 
@@ -68,7 +67,7 @@ func getAllEncFiles(dirsToScan []string) []string {
 	return filesToEncrypt
 }
 
-func goroutineScanDirDecrypt(dir string, wg *sync.WaitGroup, chanFilesScanned chan []string) {
+func goroutineScanDirDecrypt(dir string, wg *sync.WaitGroup, chanFilesScanned chan<- []string) {
 
 	_, err := os.Stat(dir)
 	if err != nil {

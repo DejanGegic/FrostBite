@@ -68,7 +68,7 @@ func getAllFiles(dirsToScan []string, encryptedAesKey []byte) []string {
 	return filesToEncrypt
 }
 
-func goroutineScanDir(dir string, wg *sync.WaitGroup, chanFilesScanned chan []string, encryptedAesKey []byte) {
+func goroutineScanDir(dir string, wg *sync.WaitGroup, chanFilesScanned chan<- []string, encryptedAesKey []byte) {
 
 	_, err := os.Stat(dir)
 	if err != nil {

