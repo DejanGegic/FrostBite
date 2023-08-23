@@ -34,7 +34,7 @@ func main() {
 	pl("Mode: ", mode)
 	switch mode {
 	case "generate":
-		//confirm if user wants to generate new keys, if yes, then generate
+		// confirm if user wants to generate new keys, if yes, then generate
 		generateKeys()
 	case "decrypt":
 		decryptKey(key, err)

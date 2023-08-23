@@ -1,3 +1,4 @@
+// go:build windows
 //go:build windows
 // +build windows
 
@@ -5,10 +6,11 @@ package coldfire
 
 import (
 	"fmt"
+	"os"
+
 	"frostbite.com/coldfire/models"
 	ps "github.com/mitchellh/go-ps"
 	"golang.org/x/sys/windows"
-	"os"
 )
 
 func killProcByPID(pid int) error {
@@ -16,7 +18,7 @@ func killProcByPID(pid int) error {
 	OpenProcess := kernel32dll.NewProc("OpenProcess")
 	TerminateProcess := kernel32dll.NewProc("TerminateProcess")
 	op, _, _ := OpenProcess.Call(0x0001, 1, uintptr(pid))
-	//protip:too much error handling can screw things up
+	// protip:too much error handling can screw things up
 	_, _, err2 := TerminateProcess.Call(op, 9)
 	return err2
 }

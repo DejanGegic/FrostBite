@@ -15,7 +15,7 @@ import (
 
 func RunDencryptForCurrentDir(AESKey []byte) (fileList []string, err error) {
 	timeToScan := time.Now()
-	//get pwd
+	// get pwd
 	currentDir, err := os.Getwd()
 	if err != nil {
 		return nil, err
@@ -27,7 +27,7 @@ func RunDencryptForCurrentDir(AESKey []byte) (fileList []string, err error) {
 	return fileList, nil
 }
 func DecryptFilesInDir(startDirPath string, skipHiddenDirs bool, AESKey []byte) error {
-	//scan only non hidden directories
+	// scan only non hidden directories
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	filesToDecrypt, err := scan.ScanForEncFilesInDir(startDirPath, skipHiddenDirs)
 	if err != nil {
@@ -39,7 +39,7 @@ func DecryptFilesInDir(startDirPath string, skipHiddenDirs bool, AESKey []byte) 
 
 	for _, filePath := range filesToDecrypt {
 		go func(filePath string) {
-			//decrypt file and remove .enc
+			// decrypt file and remove .enc
 			enc.DecryptFileAES(AESKey, filePath)
 			os.Remove(filePath)
 			wg.Done()
@@ -54,7 +54,7 @@ func DecryptFilesInDir(startDirPath string, skipHiddenDirs bool, AESKey []byte) 
 	return nil
 }
 func UnlockFilesArray(filesToEncrypt []string, AESKey []byte) {
-	//scan only non hidden directories
+	// scan only non hidden directories
 
 	// runtime.GOMAXPROCS(16)
 	numCPU := runtime.NumCPU()
@@ -81,9 +81,9 @@ func UnlockFilesArray(filesToEncrypt []string, AESKey []byte) {
 			}(i + j)
 		}
 
-		//log the progress in percent
+		// log the progress in percent
 		percent := (float64(i) / float64(len(filesToEncrypt))) * 100
-		//print progress in percent, limit to 2 decimal places
+		// print progress in percent, limit to 2 decimal places
 		fmt.Printf("Progress: %.2f%%\r", percent)
 		wg.Wait()
 	}

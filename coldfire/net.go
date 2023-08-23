@@ -20,12 +20,12 @@ import (
 func GetGlobalIp() string {
 	ip := ""
 	resolvers := []string{
-		"https://api.ipify.org?format=text",
-		"http://myexternalip.com/raw",
-		"http://ident.me",
-		"https://ifconfig.me",
-		"https://bot.whatismyipaddress.com/",
-		"https://ifconfig.co",
+		"https:// api.ipify.org?format=text",
+		"http:// myexternalip.com/raw",
+		"http:// ident.me",
+		"https:// ifconfig.me",
+		"https:// bot.whatismyipaddress.com/",
+		"https:// ifconfig.co",
 	}
 
 	for {

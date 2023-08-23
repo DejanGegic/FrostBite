@@ -9,7 +9,7 @@ import (
 var pl = fmt.Println
 
 func CopyPublicKeyFromAdmin() error {
-	//copy key from admin/keys to main
+	// copy key from admin/keys to main
 	os.Mkdir("keys", 0755)
 	pubKey, err := os.ReadFile("Admin/keys/public.key")
 	if err != nil {

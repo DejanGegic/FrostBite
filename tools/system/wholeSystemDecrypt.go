@@ -14,8 +14,8 @@ import (
 
 func WholeSystemDecrypt(aesKey []byte) {
 
-	//set variables
-	//set variables
+	// set variables
+	// set variables
 	var (
 		filesToDecrypt []string
 		// sizeOfFoundFiles int64
@@ -82,7 +82,7 @@ func goroutineScanDirDecrypt(dir string, wg *sync.WaitGroup, chanFilesScanned ch
 			fmt.Println("Error: ", err)
 			wg.Done()
 		}
-		//send files to channel
+		// send files to channel
 		chanFilesScanned <- files
 
 		pl("Files found in this dir: ", humanize.Comma(int64(len(files))))

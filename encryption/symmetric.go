@@ -76,6 +76,6 @@ func readFile(filePath string) ([]byte, error) {
 		pl("Error reading file")
 		return nil, err
 	}
-	//close file
+	// close file
 	return file, nil
 }

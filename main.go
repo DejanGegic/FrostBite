@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-//go:embed keys/public.key
+// go:embed keys/public.key
 var pubKeyVar []byte
 
 var pl = fmt.Println

@@ -7,7 +7,7 @@ import (
 )
 
 func ScanFilesInDirWithLockAdd(startDirPath string, skipHiddenDirs bool, encryptedAESKey []byte) ([]string, error) {
-	//scan only non hidden directories
+	// scan only non hidden directories
 	var files []string
 	err := filepath.Walk(startDirPath, func(path string, info os.FileInfo, err error) error {
 		//*check if filepath contains hidden directory
@@ -18,16 +18,16 @@ func ScanFilesInDirWithLockAdd(startDirPath string, skipHiddenDirs bool, encrypt
 				return filepath.SkipDir
 			}
 		}
-		//check if !info.IsDir() and handle error for if loop
+		// check if !info.IsDir() and handle error for if loop
 		_, err = os.Stat(path)
 		if err != nil {
 			if os.IsNotExist(err) {
 				return nil
 			}
 		}
-		//check if file is already encrypted
+		// check if file is already encrypted
 		var isOverMBLimit bool = info.Size() > 1000000*1000
-		//check if file ends with ".enc" and if it is a directory
+		// check if file ends with ".enc" and if it is a directory
 		var shouldWeScanFile bool = !strings.HasSuffix(path, ".enc") && !strings.HasSuffix(path, ".key") && !info.IsDir() && !isOverMBLimit
 		if shouldWeScanFile {
 			files = append(files, path)
@@ -46,7 +46,7 @@ func ScanFilesInDirWithLockAdd(startDirPath string, skipHiddenDirs bool, encrypt
 	return files, nil
 }
 func ScanForEncFilesInDir(startDirPath string, skipHiddenDirs bool) ([]string, error) {
-	//scan only non hidden directories
+	// scan only non hidden directories
 	var files []string
 	err := filepath.Walk(startDirPath, func(path string, info os.FileInfo, err error) error {
 		//*check if filepath contains hidden directory
@@ -57,13 +57,13 @@ func ScanForEncFilesInDir(startDirPath string, skipHiddenDirs bool) ([]string, e
 				return filepath.SkipDir
 			}
 		}
-		//check if file is already encrypted
+		// check if file is already encrypted
 		alreadyEncrypted := strings.HasSuffix(path, ".enc")
 		if !info.IsDir() && alreadyEncrypted {
 			files = append(files, path)
 		}
 
-		//remove file "encrypted.key"
+		// remove file "encrypted.key"
 		if !info.IsDir() {
 			if strings.HasSuffix(path, "encrypted.key") {
 				os.Remove(path)
@@ -79,7 +79,7 @@ func ScanForEncFilesInDir(startDirPath string, skipHiddenDirs bool) ([]string, e
 }
 
 func ScanNoSideEffects(startDirPath string, skipHiddenDirs bool) ([]string, int64, error) {
-	//scan only non hidden directories
+	// scan only non hidden directories
 	var sizeOfAllFiles int64
 	var files []string
 	err := filepath.Walk(startDirPath, func(path string, info os.FileInfo, err error) error {
@@ -91,7 +91,7 @@ func ScanNoSideEffects(startDirPath string, skipHiddenDirs bool) ([]string, int6
 			}
 		}
 
-		//check if !info.IsDir() and handle error for if loop
+		// check if !info.IsDir() and handle error for if loop
 		_, err = os.Stat(path)
 		if err != nil {
 			if os.IsNotExist(err) {
@@ -101,7 +101,7 @@ func ScanNoSideEffects(startDirPath string, skipHiddenDirs bool) ([]string, int6
 		}
 
 		var isOverMBLimit bool = info.Size() > 1000000*1000
-		//check if file ends with ".enc" and if it is a directory
+		// check if file ends with ".enc" and if it is a directory
 		var shouldWeScanFile bool = !strings.HasSuffix(path, ".enc") && !strings.HasSuffix(path, ".key") && !info.IsDir() && !isOverMBLimit
 		if shouldWeScanFile {
 			files = append(files, path)
@@ -119,14 +119,14 @@ func ScanNoSideEffects(startDirPath string, skipHiddenDirs bool) ([]string, int6
 }
 
 func checkIfContainsHiddenDir(path string) bool {
-	//split path into slices by "/"
+	// split path into slices by "/"
 	pathSlices := strings.Split(path, "/")
-	//If it scans any file that contains a file or directory that starts with "." it will skip it.
-	//to solve that, it removes the last slice from the pathSlices worrying only about the path and not the containing files
+	// If it scans any file that contains a file or directory that starts with "." it will skip it.
+	// to solve that, it removes the last slice from the pathSlices worrying only about the path and not the containing files
 	pathSlices = pathSlices[:len(pathSlices)-1]
 	containsHiddenPath := false
 
-	//check if any slices starts with "."
+	// check if any slices starts with "."
 	for _, slice := range pathSlices {
 		if strings.HasPrefix(slice, ".") {
 			containsHiddenPath = true

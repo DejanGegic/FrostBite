@@ -23,7 +23,7 @@ func StartNgrokHTTP(port int) error {
 
 // GetNgrokURL returns the URL of the Ngrok tunnel exposing the machine.
 func GetNgrokURL() (string, error) {
-	local_url := "http://localhost:4040/api/tunnels"
+	local_url := "http:// localhost:4040/api/tunnels"
 	resp, err := http.Get(local_url)
 
 	if err != nil {

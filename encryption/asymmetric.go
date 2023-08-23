@@ -74,13 +74,13 @@ func GenerateKeysAndWriteThemToFiles() error {
 }
 
 func CheckIfFileKeysAreValid(key []byte) error {
-	//read from file
+	// read from file
 	publicKeyFromFile, privateKeyFromFile, err := readKeysFromFIle()
 	if err != nil {
 		return err
 	}
 
-	//convert to key
+	// convert to key
 	pubKey, err := BytesToPublicKey(publicKeyFromFile)
 	if err != nil {
 		return err
